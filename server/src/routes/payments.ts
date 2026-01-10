@@ -8,9 +8,7 @@ const router = Router();
 // Process a payment
 router.post('/', async (req: AuthRequest, res: Response) => {
     const { cardId, amount } = req.body;
-    // TODO: Connect this to real Auth middleware once Client Login is fully implemented.
-    // currently hardcoding ID 1 for MVP Demo.
-    const userId = 1; // const userId = req.user?.userId;
+    const userId = req.user?.id;
 
     if (!cardId || !amount) {
         return res.status(400).json({ message: 'Card ID and amount are required' });
