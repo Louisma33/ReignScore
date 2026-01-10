@@ -74,6 +74,13 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
+
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Payments</ThemedText>
+        <Link href="/pay" style={{ marginTop: 10 }}>
+          <ThemedText type="link">Make a Payment</ThemedText>
+        </Link>
+      </ThemedView>
     </ParallaxScrollView>
   );
 }
