@@ -9,7 +9,7 @@ import { api } from '../services/api';
 export default function PayScreen() {
     // Mock user/token for this implementation phase since auth might not be fully wired in frontend
     // In production, use meaningful token
-    const mockToken = "mock-token";
+
 
     const [amount, setAmount] = useState('');
     const [cardId, setCardId] = useState('');
@@ -23,7 +23,7 @@ export default function PayScreen() {
 
         setLoading(true);
         try {
-            const result = await api.processPayment(parseInt(cardId), parseFloat(amount), mockToken);
+            const result = await api.processPayment(parseInt(cardId), parseFloat(amount));
             if (result.message === 'Payment processed successfully') {
                 Alert.alert('Success', 'Payment Successful!', [
                     { text: 'OK', onPress: () => router.back() }
@@ -47,7 +47,7 @@ export default function PayScreen() {
             <TextInput
                 style={styles.input}
                 value={cardId}
-                onChangeText={setCardId}
+                onChangeText={(text) => setCardId(text.replace(/[^0-9]/g, ''))}
                 keyboardType="numeric"
                 placeholder="Enter Card ID"
                 placeholderTextColor="#999"

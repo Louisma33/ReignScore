@@ -1,17 +1,21 @@
 
 import { Response, Router } from 'express';
 import { query } from '../db';
-import { AuthRequest } from '../middleware/auth';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
 // Process a payment
-router.post('/', async (req: AuthRequest, res: Response) => {
+router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
     const { cardId, amount } = req.body;
     const userId = req.user?.id;
 
     if (!cardId || !amount) {
         return res.status(400).json({ message: 'Card ID and amount are required' });
+    }
+
+    if (isNaN(Number(cardId))) {
+        return res.status(400).json({ message: 'Invalid Card ID' });
     }
 
     try {
