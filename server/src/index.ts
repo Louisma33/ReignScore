@@ -13,6 +13,8 @@ import authRoutes from './routes/auth';
 import cardsRoutes from './routes/cards';
 import notificationsRoutes from './routes/notifications';
 import paymentsRoutes from './routes/payments';
+import rewardsRoutes from './routes/rewards';
+import transactionsRoutes from './routes/transactions';
 
 app.use(helmet());
 app.use(cors());
@@ -22,6 +24,8 @@ app.use('/auth', authRoutes);
 app.use('/cards', cardsRoutes);
 app.use('/notifications', notificationsRoutes);
 app.use('/payments', paymentsRoutes);
+app.use('/rewards', rewardsRoutes);
+app.use('/transactions', transactionsRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: 'CardReign API is running' });

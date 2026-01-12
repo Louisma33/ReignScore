@@ -6,15 +6,17 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
+import { TransactionList } from '../../components/TransactionList';
 
 export default function HomeScreen() {
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#000000', dark: '#000000' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('@/assets/images/card-reign-premium.png')}
+          style={styles.headerImage}
+          contentFit="contain"
         />
       }>
       <ThemedView style={styles.titleContainer}>
@@ -80,7 +82,12 @@ export default function HomeScreen() {
         <Link href="/pay" style={{ marginTop: 10 }}>
           <ThemedText type="link">Make a Payment</ThemedText>
         </Link>
+        <Link href="/add-card" style={{ marginTop: 10 }}>
+          <ThemedText type="link">Add a New Card</ThemedText>
+        </Link>
       </ThemedView>
+
+      <TransactionList />
     </ParallaxScrollView>
   );
 }
@@ -95,9 +102,9 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
+  headerImage: {
+    height: '100%',
+    width: '100%',
     bottom: 0,
     left: 0,
     position: 'absolute',

@@ -2,6 +2,7 @@
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 
@@ -47,7 +48,7 @@ export default function LoginScreen() {
                     value={email}
                     onChangeText={setEmail}
                     placeholder="Enter your email"
-                    placeholderTextColor="#666"
+                    placeholderTextColor={Colors.common.placeholder}
                     autoCapitalize="none"
                     keyboardType="email-address"
                 />
@@ -60,7 +61,7 @@ export default function LoginScreen() {
                     value={password}
                     onChangeText={setPassword}
                     placeholder="Enter your password"
-                    placeholderTextColor="#666"
+                    placeholderTextColor={Colors.common.placeholder}
                     secureTextEntry
                 />
             </View>
@@ -83,20 +84,20 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000',
+        backgroundColor: Colors.common.black,
         justifyContent: 'center',
         padding: 20,
     },
     title: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#FFD700', // Gold
+        color: Colors.common.gold,
         textAlign: 'center',
         marginBottom: 10,
     },
     subtitle: {
         fontSize: 18,
-        color: '#888',
+        color: Colors.common.textGray,
         textAlign: 'center',
         marginBottom: 40,
     },
@@ -104,27 +105,27 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     label: {
-        color: '#FFF',
+        color: Colors.common.white,
         marginBottom: 8,
         fontSize: 14,
     },
     input: {
-        backgroundColor: '#1A1A1A',
-        color: '#FFF',
+        backgroundColor: Colors.common.darkGray,
+        color: Colors.common.white,
         padding: 15,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#333',
+        borderColor: Colors.common.lightGray,
     },
     button: {
-        backgroundColor: '#FFD700',
+        backgroundColor: Colors.common.gold,
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 20,
     },
     buttonText: {
-        color: '#000',
+        color: Colors.common.black,
         fontWeight: 'bold',
         fontSize: 16,
     },
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     linkText: {
-        color: '#FFD700',
+        color: Colors.common.gold,
         textAlign: 'center',
     },
 });

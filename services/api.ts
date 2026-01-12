@@ -43,6 +43,24 @@ export const api = {
         return response.json();
     },
 
+    put: async (endpoint: string, body: any, token?: string) => {
+        const headers: any = { 'Content-Type': 'application/json' };
+        const authToken = token || await getToken();
+        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
+        const response = await fetch(`${API_URL}${endpoint}`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(body),
+        });
+        return response.json();
+    },
+
+    // Card helpers
+    addCard: async (cardData: any, token?: string) => {
+        return api.post('/cards', cardData, token);
+    },
+
     // Payment specific helpers
     processPayment: async (cardId: number, amount: number, token?: string) => {
         return api.post('/payments', { cardId, amount }, token);

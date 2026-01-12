@@ -39,6 +39,12 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
             [newBalance, cardId]
         );
 
+        // Record transaction
+        await query(
+            'INSERT INTO transactions (user_id, card_id, amount, type, description) VALUES ($1, $2, $3, $4, $5)',
+            [userId, cardId, paymentAmount, 'payment', 'Payment received']
+        );
+
         res.json({ message: 'Payment processed successfully', newBalance });
     } catch (error) {
         console.error('Error processing payment:', error);

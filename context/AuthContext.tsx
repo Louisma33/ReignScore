@@ -1,4 +1,5 @@
 
+import { api } from '@/services/api';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
@@ -64,9 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const refreshUser = async () => {
         if (!token) return;
         try {
-            // We'll need to create this 'me' endpoint or simple test fetch
-            // const userData = await api.get('/auth/me'); 
-            // setUser(userData);
+            const userData = await api.get('/auth/me', token);
+            setUser(userData);
         } catch (e) {
             console.log('Failed to fetch user', e);
         }

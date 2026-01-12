@@ -2,6 +2,7 @@
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../constants/theme';
 import { api } from '../services/api';
 // Assuming we might have a global auth state or storage later, for now simplifying:
 // In a real app, we'd get the token from a context.
@@ -50,7 +51,7 @@ export default function PayScreen() {
                 onChangeText={(text) => setCardId(text.replace(/[^0-9]/g, ''))}
                 keyboardType="numeric"
                 placeholder="Enter Card ID"
-                placeholderTextColor="#999"
+                placeholderTextColor={Colors.common.placeholder}
             />
 
             <Text style={styles.label}>Amount</Text>
@@ -60,7 +61,7 @@ export default function PayScreen() {
                 onChangeText={setAmount}
                 keyboardType="numeric"
                 placeholder="0.00"
-                placeholderTextColor="#999"
+                placeholderTextColor={Colors.common.placeholder}
             />
 
             <TouchableOpacity style={styles.button} onPress={handlePayment} disabled={loading}>
@@ -78,32 +79,32 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#000', // Dark theme as per project
+        backgroundColor: Colors.common.black,
     },
     label: {
-        color: 'gold',
+        color: Colors.common.gold,
         marginBottom: 8,
         fontSize: 16,
         fontWeight: 'bold',
     },
     input: {
-        backgroundColor: '#1a1a1a',
-        color: '#fff',
+        backgroundColor: Colors.common.darkGray,
+        color: Colors.common.white,
         padding: 15,
         borderRadius: 8,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#333',
+        borderColor: Colors.common.lightGray,
     },
     button: {
-        backgroundColor: 'gold',
+        backgroundColor: Colors.common.gold,
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 10,
     },
     buttonText: {
-        color: '#000',
+        color: Colors.common.black,
         fontWeight: 'bold',
         fontSize: 18,
     }

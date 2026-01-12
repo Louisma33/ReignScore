@@ -60,19 +60,6 @@ router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response)
     }
 });
 
-// Pay off a card (reset balance to 0)
-router.put('/:id/pay', authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-        const { id } = req.params;
-        await query(
-            'UPDATE credit_cards SET balance = 0 WHERE id = $1 AND user_id = $2',
-            [id, req.user.id]
-        );
-        res.json({ message: 'Card paid off successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
+
 
 export default router;
