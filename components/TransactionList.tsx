@@ -15,22 +15,29 @@ interface Transaction {
 
 interface TransactionListProps {
     limit?: number;
+    search?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
-export function TransactionList({ limit }: TransactionListProps) {
+export function TransactionList({ limit, search, startDate, endDate }: TransactionListProps) {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchTransactions();
-    }, []);
+    }, [limit, search, startDate, endDate]);
 
     const fetchTransactions = async () => {
         try {
-            const response = await api.get('/transactions');
-            // If limit is provided, slice the array. Otherwise show all.
-            const dataToShow = limit ? response.slice(0, limit) : response;
-            setTransactions(dataToShow);
+            const params = new URLSearchParams();
+            if (limit) params.append('limit', limit.toString());
+            if (search) params.append('search', search);
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+
+            const response = await api.get(`/transactions?${params.toString()}`);
+            setTransactions(response);
         } catch (error) {
             console.error('Failed to fetch transactions', error);
         } finally {

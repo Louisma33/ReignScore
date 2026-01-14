@@ -17,12 +17,16 @@ const MAPPING = {
   'house.fill': 'home',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
+  'chevron.right': 'keyboard-arrow-right',
   'gear': 'settings',
   'person.fill': 'person',
   'arrow.right.square': 'logout',
   'gift.fill': 'card-giftcard',
   'lock.fill': 'lock',
+  'bell.fill': 'notifications',
+  'moon.fill': 'dark-mode',
+  'faceid': 'face',
+  'chart.pie.fill': 'pie-chart',
 } as IconMapping;
 
 /**

@@ -1,7 +1,7 @@
 
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
@@ -39,7 +39,14 @@ export default function SignupScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>CardReign</Text>
+            <View style={styles.logoContainer}>
+                <Text style={styles.title}>CardReign</Text>
+                <Image
+                    source={require('../../assets/images/card-reign-premium.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                />
+            </View>
             <Text style={styles.subtitle}>Create Account</Text>
 
             <View style={styles.inputContainer}>
@@ -100,12 +107,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
     },
+    logoContainer: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    logo: {
+        width: 80,
+        height: 80,
+        marginBottom: 10,
+    },
     title: {
         fontSize: 32,
         fontWeight: 'bold',
         color: Colors.common.gold,
         textAlign: 'center',
-        marginBottom: 10,
+        marginBottom: 5,
     },
     subtitle: {
         fontSize: 18,

@@ -7,13 +7,39 @@ const router = Router();
 
 
 // Get all transactions for the authenticated user
+// Get all transactions for the authenticated user with filtering
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
-        const result = await query(
-            'SELECT * FROM transactions WHERE user_id = $1 ORDER BY created_at DESC',
-            [userId]
-        );
+        const { search, startDate, endDate, limit } = req.query;
+
+        let queryText = 'SELECT * FROM transactions WHERE user_id = $1';
+        const queryParams: any[] = [userId];
+
+        // Search filter (merchant or category)
+        if (search) {
+            queryParams.push(`%${search}%`);
+            queryText += ` AND (description ILIKE $${queryParams.length} OR category ILIKE $${queryParams.length})`;
+        }
+
+        // Date range filter
+        if (startDate) {
+            queryParams.push(startDate);
+            queryText += ` AND created_at >= $${queryParams.length}`;
+        }
+        if (endDate) {
+            queryParams.push(endDate);
+            queryText += ` AND created_at <= $${queryParams.length}`;
+        }
+
+        queryText += ' ORDER BY created_at DESC';
+
+        if (limit) {
+            queryParams.push(Number(limit));
+            queryText += ` LIMIT $${queryParams.length}`;
+        }
+
+        const result = await query(queryText, queryParams);
         res.json(result.rows);
     } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -25,14 +51,28 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.get('/stats', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
-        // Check for 'payment' type exclusion if you only want spending
-        const result = await query(
-            `SELECT category, SUM(amount) as total 
-             FROM transactions 
-             WHERE user_id = $1 AND type != 'payment' 
-             GROUP BY category`,
-            [userId]
-        );
+        const { startDate, endDate } = req.query;
+
+        let queryText = `
+            SELECT category, SUM(amount) as total 
+            FROM transactions 
+            WHERE user_id = $1 AND type != 'payment'
+        `;
+        const queryParams: any[] = [userId];
+
+        if (startDate) {
+            queryParams.push(startDate);
+            queryText += ` AND created_at >= $${queryParams.length}`;
+        }
+
+        if (endDate) {
+            queryParams.push(endDate);
+            queryText += ` AND created_at <= $${queryParams.length}`;
+        }
+
+        queryText += ` GROUP BY category`;
+
+        const result = await query(queryText, queryParams);
         res.json(result.rows);
     } catch (error) {
         console.error('Error fetching stats:', error);
@@ -53,6 +93,54 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
         res.status(201).json(result.rows[0]);
     } catch (error) {
         console.error('Error creating transaction:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get spending trend (daily or monthly)
+router.get('/stats/trend', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.user?.id;
+        const { startDate, endDate } = req.query;
+
+        // Default to daily logic unless range is large
+        // Ideally checking the diff between start/end, but for simplicity
+        // let's say if no start date provided (all time) -> monthly
+        // if start date provided (month view) -> daily
+
+        const isMonthlyView = !startDate;
+        const dateFormat = isMonthlyView ? 'YYYY-MM' : 'YYYY-MM-DD';
+
+        let queryText = `
+            SELECT TO_CHAR(created_at, '${dateFormat}') as label, SUM(amount) as value
+            FROM transactions
+            WHERE user_id = $1 AND type != 'payment'
+        `;
+        const queryParams: any[] = [userId];
+
+        if (startDate) {
+            queryParams.push(startDate);
+            queryText += ` AND created_at >= $${queryParams.length}`;
+        }
+
+        if (endDate) {
+            queryParams.push(endDate);
+            queryText += ` AND created_at <= $${queryParams.length}`;
+        }
+
+        queryText += ` GROUP BY label ORDER BY label ASC`;
+
+        const result = await query(queryText, queryParams);
+
+        // Map value to number
+        const formatted = result.rows.map((row: any) => ({
+            label: row.label,
+            value: parseFloat(row.value)
+        }));
+
+        res.json(formatted);
+    } catch (error) {
+        console.error('Error fetching trend:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

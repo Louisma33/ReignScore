@@ -1,11 +1,10 @@
-import express, { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
+import { Request, Response, Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { query } from '../db';
-import { Router } from 'express';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = Router();
-import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
@@ -13,6 +12,32 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => 
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+router.put('/profile', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+        const { name, email } = req.body;
+        const userId = req.user?.id;
+
+        // Check email uniqueness if changed
+        if (email) {
+            const check = await query('SELECT * FROM users WHERE email = $1 AND id != $2', [email, userId]);
+            if (check.rows.length > 0) {
+                return res.status(400).json({ message: 'Email already in use' });
+            }
+        }
+
+        const result = await query(
+            'UPDATE users SET name = COALESCE($1, name), email = COALESCE($2, email) WHERE id = $3 RETURNING id, name, email',
+            [name, email, userId]
+        );
+
         res.json(result.rows[0]);
     } catch (error) {
         console.error(error);

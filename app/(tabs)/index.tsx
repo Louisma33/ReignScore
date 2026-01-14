@@ -5,7 +5,9 @@ import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Link } from 'expo-router';
+import { TouchableOpacity, View } from 'react-native';
 import { TransactionList } from '../../components/TransactionList';
 
 export default function HomeScreen() {
@@ -82,8 +84,33 @@ export default function HomeScreen() {
         <Link href="/pay" style={{ marginTop: 10 }}>
           <ThemedText type="link">Make a Payment</ThemedText>
         </Link>
+        <Link href="/plastiq/pay-bill" style={{ marginTop: 10 }}>
+          <ThemedText type="link">Pay a Bill (Plastiq)</ThemedText>
+        </Link>
         <Link href="/add-card" style={{ marginTop: 10 }}>
           <ThemedText type="link">Add a New Card</ThemedText>
+        </Link>
+      </ThemedView>
+
+      <ThemedView style={styles.stepContainer}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <ThemedText type="subtitle">Savings Goals</ThemedText>
+          <Link href="/vaults" asChild>
+            <TouchableOpacity>
+              <ThemedText type="link">View All</ThemedText>
+            </TouchableOpacity>
+          </Link>
+        </View>
+        <Link href="/vaults" asChild>
+          <TouchableOpacity style={styles.vaultCard}>
+            <View style={styles.vaultIcon}>
+              <IconSymbol name="star.fill" size={24} color="#000" />
+            </View>
+            <View>
+              <ThemedText type="defaultSemiBold">My Vaults</ThemedText>
+              <ThemedText style={{ color: '#888', fontSize: 12 }}>Tap to manage goals</ThemedText>
+            </View>
+          </TouchableOpacity>
         </Link>
       </ThemedView>
 
@@ -103,10 +130,26 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   headerImage: {
-    height: '100%',
-    width: '100%',
     bottom: 0,
     left: 0,
     position: 'absolute',
   },
+  vaultCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E1E1E',
+    padding: 16,
+    borderRadius: 12,
+    gap: 16,
+    borderWidth: 1,
+    borderColor: '#333'
+  },
+  vaultIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFD700',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 });
