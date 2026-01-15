@@ -2,6 +2,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +24,16 @@ export default function VaultDetailScreen() {
     const [depositAmount, setDepositAmount] = useState('');
     const [depositing, setDepositing] = useState(false);
     const router = useRouter();
+
+    // Theme Colors
+    const backgroundColor = useThemeColor({}, 'background');
+    const cardColor = useThemeColor({}, 'card');
+    const inputColor = useThemeColor({}, 'input');
+    const borderColor = useThemeColor({}, 'border');
+    const textColor = useThemeColor({}, 'text');
+    const placeholderColor = useThemeColor({}, 'icon');
+    const tintColor = useThemeColor({}, 'tint');
+    const actionTextColor = useThemeColor({}, 'action');
 
     useEffect(() => {
         loadGoal();
@@ -102,7 +113,7 @@ export default function VaultDetailScreen() {
     if (loading) {
         return (
             <ThemedView style={[styles.container, styles.center]}>
-                <ActivityIndicator size="large" color="#FFD700" />
+                <ActivityIndicator size="large" color={tintColor} />
             </ThemedView>
         );
     }
@@ -127,9 +138,9 @@ export default function VaultDetailScreen() {
                 <ScrollView contentContainerStyle={styles.content}>
 
                     {/* Header Card */}
-                    <View style={[styles.headerCard, { borderColor: goal.color }]}>
+                    <View style={[styles.headerCard, { backgroundColor: cardColor, borderColor: goal.color || borderColor, borderWidth: 1 }]}>
                         <View style={[styles.iconContainer, { backgroundColor: goal.color }]}>
-                            <IconSymbol name={goal.icon as any || "star.fill"} size={40} color="#000" />
+                            <IconSymbol name={goal.icon as any || "star.fill"} size={40} color={actionTextColor} />
                         </View>
                         <ThemedText type="title" style={{ marginTop: 10 }}>${parseFloat(goal.current_amount).toFixed(2)}</ThemedText>
                         <ThemedText style={styles.subtitle}>saved of ${parseFloat(goal.target_amount).toFixed(0)} goal</ThemedText>
@@ -144,9 +155,9 @@ export default function VaultDetailScreen() {
                     <ThemedText type="subtitle" style={styles.sectionTitle}>Manage Funds</ThemedText>
                     <View style={styles.inputRow}>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: inputColor, color: textColor, borderColor }]}
                             placeholder="$ Amount"
-                            placeholderTextColor="#666"
+                            placeholderTextColor={placeholderColor}
                             keyboardType="numeric"
                             value={depositAmount}
                             onChangeText={setDepositAmount}
@@ -159,17 +170,17 @@ export default function VaultDetailScreen() {
                             onPress={handleDeposit}
                             disabled={depositing}
                         >
-                            <ThemedText style={{ color: '#000', fontWeight: 'bold' }}>
+                            <ThemedText style={{ color: actionTextColor, fontWeight: 'bold' }}>
                                 {depositing ? '...' : 'Deposit'}
                             </ThemedText>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.withdrawBtn, depositing && { opacity: 0.7 }]}
+                            style={[styles.withdrawBtn, { borderColor, backgroundColor: cardColor }, depositing && { opacity: 0.7 }]}
                             onPress={handleWithdraw}
                             disabled={depositing}
                         >
-                            <ThemedText style={{ color: '#FFF', fontWeight: 'bold' }}>
+                            <ThemedText style={{ color: textColor, fontWeight: 'bold' }}>
                                 Withdraw
                             </ThemedText>
                         </TouchableOpacity>
@@ -191,12 +202,15 @@ const styles = StyleSheet.create({
     center: { justifyContent: 'center', alignItems: 'center' },
     content: { padding: 20 },
     headerCard: {
-        backgroundColor: '#1E1E1E',
         borderRadius: 20,
         padding: 30,
         alignItems: 'center',
-        borderWidth: 1,
-        marginBottom: 30
+        marginBottom: 30,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 3
     },
     iconContainer: {
         width: 80,
@@ -213,7 +227,7 @@ const styles = StyleSheet.create({
     progressBarBg: {
         width: '100%',
         height: 12,
-        backgroundColor: '#333',
+        backgroundColor: '#E0E0E0',
         borderRadius: 6,
         overflow: 'hidden',
     },
@@ -238,13 +252,10 @@ const styles = StyleSheet.create({
         marginBottom: 40
     },
     input: {
-        backgroundColor: '#1E1E1E',
-        color: '#FFF',
         padding: 16,
         borderRadius: 12,
         fontSize: 16,
         borderWidth: 1,
-        borderColor: '#333'
     },
     depositBtn: {
         flex: 1,
@@ -259,9 +270,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#333',
         borderWidth: 1,
-        borderColor: '#555'
     },
     deleteBtn: {
         alignSelf: 'center',

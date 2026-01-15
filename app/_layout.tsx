@@ -1,5 +1,5 @@
 
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -7,6 +7,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '../context/AuthContext';
+import { ThemeProvider as CustomThemeProvider } from '../context/ThemeContext';
 
 // Protected Layout Component
 function ProtectedLayout() {
@@ -30,7 +31,7 @@ function ProtectedLayout() {
   }, [token, isLoading, segments]);
 
   return (
-    <ThemeProvider value={DarkTheme}>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="auth/login" options={{ headerShown: false }} />
@@ -39,15 +40,17 @@ function ProtectedLayout() {
         <Stack.Screen name="add-card" options={{ title: 'Add Card', presentation: 'modal' }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <ProtectedLayout />
-    </AuthProvider>
+    <CustomThemeProvider>
+      <AuthProvider>
+        <ProtectedLayout />
+      </AuthProvider>
+    </CustomThemeProvider>
   );
 }

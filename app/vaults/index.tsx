@@ -2,6 +2,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { Link, Stack, useRouter } from 'expo-router';
@@ -21,6 +22,11 @@ export default function VaultsScreen() {
     const [goals, setGoals] = useState<Goal[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+
+    const tintColor = useThemeColor({}, 'tint');
+    const cardColor = useThemeColor({}, 'card');
+    const actionColor = useThemeColor({}, 'action');
+    const progressBgColor = useThemeColor({}, 'border');
 
     useEffect(() => {
         loadGoals();
@@ -43,14 +49,14 @@ export default function VaultsScreen() {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {loading ? (
-                    <ActivityIndicator size="large" color="#FFD700" />
+                    <ActivityIndicator size="large" color={tintColor} />
                 ) : (
                     <>
                         <View style={styles.headerRow}>
                             <ThemedText type="subtitle">Your Vaults</ThemedText>
                             <Link href="/vaults/create" asChild>
-                                <TouchableOpacity style={styles.createButton}>
-                                    <Ionicons name="add" size={24} color="#000" />
+                                <TouchableOpacity style={StyleSheet.flatten([styles.createButton, { backgroundColor: tintColor }])}>
+                                    <Ionicons name="add" size={24} color={actionColor} />
                                 </TouchableOpacity>
                             </Link>
                         </View>
@@ -69,17 +75,17 @@ export default function VaultsScreen() {
                                     return (
                                         <TouchableOpacity
                                             key={goal.id}
-                                            style={[styles.card, { borderColor: goal.color }]}
+                                            style={StyleSheet.flatten([styles.card, { borderColor: goal.color, backgroundColor: cardColor }])}
                                             onPress={() => router.push(`/vaults/${goal.id}`)}
                                         >
                                             <View style={[styles.iconContainer, { backgroundColor: goal.color }]}>
-                                                <IconSymbol name={goal.icon as any || "star.fill"} size={24} color="#000" />
+                                                <IconSymbol name={goal.icon as any || "star.fill"} size={24} color={actionColor} />
                                             </View>
                                             <ThemedText type="defaultSemiBold" style={styles.goalName}>{goal.name}</ThemedText>
                                             <ThemedText style={styles.amountText}>
                                                 ${parseFloat(goal.current_amount).toFixed(0)} / ${parseFloat(goal.target_amount).toFixed(0)}
                                             </ThemedText>
-                                            <View style={styles.progressBarBg}>
+                                            <View style={[styles.progressBarBg, { backgroundColor: progressBgColor }]}>
                                                 <View style={[styles.progressBarFill, { width: `${progress}%`, backgroundColor: goal.color }]} />
                                             </View>
                                         </TouchableOpacity>
@@ -108,7 +114,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     createButton: {
-        backgroundColor: '#FFD700',
         width: 40,
         height: 40,
         borderRadius: 20,
@@ -129,7 +134,6 @@ const styles = StyleSheet.create({
     },
     card: {
         width: '47%',
-        backgroundColor: '#1E1E1E',
         borderRadius: 16,
         padding: 16,
         borderWidth: 1,
@@ -154,7 +158,6 @@ const styles = StyleSheet.create({
     },
     progressBarBg: {
         height: 6,
-        backgroundColor: '#333',
         borderRadius: 3,
         overflow: 'hidden',
     },

@@ -10,29 +10,38 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   common: {
-    gold: '#FFD700',
+    gold: '#FFD700', // Classic bright gold
     black: '#000000',
-    darkGray: '#1A1A1A',
-    lightGray: '#333333',
     white: '#FFFFFF',
     textGray: '#888888',
-    placeholder: '#666666',
   },
   light: {
-    text: '#FFFFFF',
-    background: '#000000',
-    tint: '#FFD700',
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: '#FFD700',
+    text: '#11181C',       // Dark Slate
+    background: '#F8F9FA', // Porcelain / Off-White (Standard Fintech Light)
+    card: '#FFFFFF',       // Pure White Cards
+    action: '#FFFFFF',     // Action text (on buttons)
+    input: '#FFFFFF',      // White inputs
+    border: '#E2E8F0',     // Light Slate Border
+    tint: '#B8860B',       // Dark Goldenrod (Metallic Gold) - readable on white
+    icon: '#687076',
+    tabIconDefault: '#687076',
+    tabIconSelected: '#B8860B',
+    success: '#15803D',    // Deep Green
+    error: '#DC2626',      // Deep Red
   },
   dark: {
-    text: '#FFFFFF',
-    background: '#000000',
-    tint: '#FFD700',
+    text: '#ECEDEE',
+    background: '#09090B', // Rich Black (Zinc-950)
+    card: '#18181B',       // Zinc-900 Cards
+    action: '#000000',
+    input: '#18181B',
+    border: '#27272A',
+    tint: '#FFD700',       // Bright Gold
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: '#FFD700',
+    success: '#4ADE80',    // Bright Neon Green
+    error: '#EF4444',      // Bright Red
   },
 };
 

@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Svg, { G, Path } from 'react-native-svg';
+import Svg, { Defs, G, LinearGradient, Path, Stop } from 'react-native-svg';
 import { ThemedText } from './themed-text';
 
 type DataItem = {
@@ -24,15 +24,17 @@ const d2r = (d: number) => (d - 90) * Math.PI / 180.0;
 
 // Helper to calculate arc path
 function createArc(r: number, start: number, end: number, w: number) {
-    // Correct for full circle case
     if (end - start === 360) {
-        return `M ${r} 0 A ${r} ${r} 0 1 1 ${r} 0.01`; // Approximation
+        // Full circle
+        const pathRadius = r - w / 2;
+        return `M ${r} ${r - pathRadius} A ${pathRadius} ${pathRadius} 0 1 1 ${r} 0.01`;
     }
 
     const largeArc = end - start <= 180 ? 0 : 1;
 
     // R = radius - width/2.
     const pathRadius = r - w / 2;
+    // Calculate start/end points centered at (r, r)
     const sx = r + pathRadius * Math.cos(d2r(start));
     const sy = r + pathRadius * Math.sin(d2r(start));
     const ex = r + pathRadius * Math.cos(d2r(end));
@@ -56,8 +58,8 @@ export function DonutChart({
 
     const sections = useMemo(() => {
         let startAngle = 0;
-        return data.map((item) => {
-            const percentage = item.value / total;
+        return data.map((item, index) => {
+            const percentage = item.value / (total || 1);
             const angle = percentage * 360;
             const endAngle = startAngle + angle;
 
@@ -66,6 +68,7 @@ export function DonutChart({
                 startAngle,
                 endAngle,
                 path: createArc(radius, startAngle, endAngle, strokeWidth),
+                gradientId: `grad-${index}`
             };
             startAngle = endAngle;
             return section;
@@ -75,12 +78,40 @@ export function DonutChart({
     return (
         <View style={[styles.container, containerStyle]}>
             <Svg width={radius * 2} height={radius * 2}>
+                <Defs>
+                    {sections.map((section, index) => (
+                        <LinearGradient
+                            key={`def-${index}`}
+                            id={section.gradientId}
+                            x1="0%" y1="0%" x2="100%" y2="100%"
+                        >
+                            <Stop offset="0%" stopColor={section.color} stopOpacity="1" />
+                            <Stop offset="100%" stopColor={section.color} stopOpacity="0.7" />
+                        </LinearGradient>
+                    ))}
+                    {/* Shadow filter could be added here if supported well by react-native-svg on android */}
+                </Defs>
                 <G>
+                    {/* Shadow Layer (Simplified: duplicate paths with offset/opacity) */}
+                    {sections.map((section, index) => (
+                        <Path
+                            key={`shadow-${index}`}
+                            d={section.path}
+                            stroke="rgba(0,0,0,0.5)"
+                            strokeWidth={strokeWidth}
+                            fill="none"
+                            strokeLinecap="round"
+                            y={4}
+                            x={2}
+                        />
+                    ))}
+
+                    {/* Main Layer */}
                     {sections.map((section, index) => (
                         <Path
                             key={index}
                             d={section.path}
-                            stroke={section.color}
+                            stroke={`url(#${section.gradientId})`}
                             strokeWidth={strokeWidth}
                             fill="none"
                             strokeLinecap="round"
@@ -107,13 +138,19 @@ const styles = StyleSheet.create({
         position: 'absolute',
         alignItems: 'center',
         justifyContent: 'center',
+        // Add text shadow for clarity/depth
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
     },
     valueText: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
+        color: '#FFF',
     },
     labelText: {
         fontSize: 12,
-        opacity: 0.7,
+        opacity: 0.8,
+        color: '#CCC',
     },
 });

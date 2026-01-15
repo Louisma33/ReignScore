@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
 
 type Reward = {
@@ -20,6 +21,11 @@ type Reward = {
 export default function RewardsScreen() {
     const [rewards, setRewards] = useState<Reward[]>([]);
     const colorScheme = useColorScheme();
+
+    const cardColor = useThemeColor({}, 'card');
+    const inputColor = useThemeColor({}, 'input');
+    const textColor = useThemeColor({}, 'text');
+    const tintColor = useThemeColor({}, 'tint');
 
     useEffect(() => {
         loadRewards();
@@ -40,7 +46,7 @@ export default function RewardsScreen() {
     };
 
     const renderItem = ({ item }: { item: Reward }) => (
-        <ThemedView style={[styles.card, { borderLeftColor: item.color }]}>
+        <ThemedView style={[styles.card, { borderLeftColor: item.color, backgroundColor: cardColor }]}>
             <ThemedView style={styles.cardHeader}>
                 <ThemedText type="subtitle" style={styles.cardTitle}>{item.title}</ThemedText>
                 <IconSymbol name="gift.fill" size={24} color={item.color} />
@@ -49,8 +55,11 @@ export default function RewardsScreen() {
             <ThemedView style={styles.footer}>
                 <ThemedText style={styles.expiry}>Exp: {new Date(item.expiry_date).toLocaleDateString()}</ThemedText>
                 {item.code && (
-                    <TouchableOpacity style={styles.button} onPress={() => copyToClipboard(item.code)}>
-                        <ThemedText style={styles.buttonText}>{item.code}</ThemedText>
+                    <TouchableOpacity
+                        style={[styles.button, { backgroundColor: inputColor }]}
+                        onPress={() => copyToClipboard(item.code)}
+                    >
+                        <ThemedText style={[styles.buttonText, { color: textColor }]}>{item.code}</ThemedText>
                     </TouchableOpacity>
                 )}
             </ThemedView>
@@ -89,7 +98,6 @@ const styles = StyleSheet.create({
     card: {
         padding: 20,
         borderRadius: 16,
-        backgroundColor: '#1E1E1E', // Dark card
         borderLeftWidth: 6,
         // Shadow
         shadowColor: '#000',
@@ -123,13 +131,11 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     button: {
-        backgroundColor: '#333',
         paddingVertical: 6,
         paddingHorizontal: 12,
         borderRadius: 8,
     },
     buttonText: {
-        color: '#FFF',
         fontWeight: 'bold',
         fontFamily: 'Courier', // Monospace for code
     },

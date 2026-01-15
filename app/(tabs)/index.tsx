@@ -6,14 +6,20 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { Link } from 'expo-router';
 import { TouchableOpacity, View } from 'react-native';
 import { TransactionList } from '../../components/TransactionList';
 
 export default function HomeScreen() {
+  const cardColor = useThemeColor({}, 'card');
+  const borderColor = useThemeColor({}, 'border');
+  const tintColor = useThemeColor({}, 'tint');
+  const actionColor = useThemeColor({}, 'action');
+
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#000000', dark: '#000000' }}
+      headerBackgroundColor={{ light: '#FFFFFF', dark: '#000000' }}
       headerImage={
         <Image
           source={require('@/assets/images/card-reign-premium.png')}
@@ -42,26 +48,7 @@ export default function HomeScreen() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
+          <ThemedText type="subtitle">Step 2: Explore</ThemedText>
         </Link>
 
         <ThemedText>
@@ -102,9 +89,9 @@ export default function HomeScreen() {
           </Link>
         </View>
         <Link href="/vaults" asChild>
-          <TouchableOpacity style={styles.vaultCard}>
-            <View style={styles.vaultIcon}>
-              <IconSymbol name="star.fill" size={24} color="#000" />
+          <TouchableOpacity style={StyleSheet.flatten([styles.vaultCard, { backgroundColor: cardColor, borderColor }])}>
+            <View style={[styles.vaultIcon, { backgroundColor: tintColor }]}>
+              <IconSymbol name="star.fill" size={24} color={actionColor} />
             </View>
             <View>
               <ThemedText type="defaultSemiBold">My Vaults</ThemedText>
@@ -137,18 +124,15 @@ const styles = StyleSheet.create({
   vaultCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1E1E',
     padding: 16,
     borderRadius: 12,
     gap: 16,
     borderWidth: 1,
-    borderColor: '#333'
   },
   vaultIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFD700',
     justifyContent: 'center',
     alignItems: 'center'
   }

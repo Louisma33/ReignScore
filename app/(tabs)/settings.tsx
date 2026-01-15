@@ -3,6 +3,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
@@ -11,7 +12,12 @@ export default function SettingsScreen() {
     const { user, signOut } = useAuth();
     const router = useRouter();
     const [notifications, setNotifications] = useState(true);
-    const [darkMode, setDarkMode] = useState(true); // Mock state since we're forcing dark mode mostly
+    const { theme, setTheme, isDark } = useTheme();
+
+    // Toggle handler
+    const toggleDarkMode = (value: boolean) => {
+        setTheme(value ? 'dark' : 'light');
+    };
 
     const handleSignOut = async () => {
         Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
@@ -92,8 +98,8 @@ export default function SettingsScreen() {
                             <ThemedText style={styles.itemText}>Dark Mode</ThemedText>
                         </View>
                         <Switch
-                            value={darkMode}
-                            onValueChange={setDarkMode}
+                            value={isDark}
+                            onValueChange={toggleDarkMode}
                             trackColor={{ false: '#333', true: '#FFD700' }}
                         />
                     </View>

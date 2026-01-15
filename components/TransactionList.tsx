@@ -1,8 +1,10 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { MerchantLogo } from './MerchantLogo';
 
 interface Transaction {
     id: number;
@@ -24,6 +26,11 @@ export function TransactionList({ limit, search, startDate, endDate }: Transacti
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const tintColor = useThemeColor({}, 'tint');
+    const borderColor = useThemeColor({}, 'border');
+    const successColor = useThemeColor({}, 'success');
+    const textColor = useThemeColor({}, 'text');
+
     useEffect(() => {
         fetchTransactions();
     }, [limit, search, startDate, endDate]);
@@ -37,9 +44,15 @@ export function TransactionList({ limit, search, startDate, endDate }: Transacti
             if (endDate) params.append('endDate', endDate);
 
             const response = await api.get(`/transactions?${params.toString()}`);
-            setTransactions(response);
+            if (Array.isArray(response)) {
+                setTransactions(response);
+            } else {
+                console.error('Invalid transactions response:', response);
+                setTransactions([]);
+            }
         } catch (error) {
             console.error('Failed to fetch transactions', error);
+            setTransactions([]);
         } finally {
             setLoading(false);
         }
@@ -48,27 +61,30 @@ export function TransactionList({ limit, search, startDate, endDate }: Transacti
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="small" color="#FFD700" />
+                <ActivityIndicator size="small" color={tintColor} />
             </View>
         );
     }
 
     return (
         <ThemedView style={styles.container}>
-            <ThemedText type="subtitle" style={styles.header}>Recent Transactions</ThemedText>
+            <ThemedText type="subtitle" style={[styles.header, { color: tintColor }]}>Recent Transactions</ThemedText>
 
             {transactions.length === 0 ? (
                 <ThemedText style={styles.emptyText}>No recent transactions</ThemedText>
             ) : (
                 transactions.map((tx) => (
-                    <View key={tx.id} style={styles.transactionItem}>
-                        <View>
-                            <ThemedText type="defaultSemiBold">{tx.description}</ThemedText>
-                            <ThemedText style={styles.date}>{new Date(tx.created_at).toLocaleDateString()}</ThemedText>
+                    <View key={tx.id} style={[styles.transactionItem, { borderBottomColor: borderColor }]}>
+                        <View style={styles.leftContent}>
+                            <MerchantLogo name={tx.description} />
+                            <View style={styles.textContent}>
+                                <ThemedText type="defaultSemiBold">{tx.description}</ThemedText>
+                                <ThemedText style={styles.date}>{new Date(tx.created_at).toLocaleDateString()}</ThemedText>
+                            </View>
                         </View>
                         <ThemedText
                             type="defaultSemiBold"
-                            style={tx.type === 'payment' ? styles.paymentAmount : styles.amount}
+                            style={{ color: tx.type === 'payment' ? successColor : textColor }}
                         >
                             {tx.type === 'payment' ? '+' : '-'}${parseFloat(tx.amount).toFixed(2)}
                         </ThemedText>
@@ -90,7 +106,6 @@ const styles = StyleSheet.create({
     },
     header: {
         marginBottom: 8,
-        color: '#FFD700',
     },
     transactionItem: {
         flexDirection: 'row',
@@ -98,17 +113,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#333',
+    },
+    leftContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    textContent: {
+        gap: 2,
     },
     date: {
         fontSize: 12,
         opacity: 0.7,
-    },
-    amount: {
-        color: '#fff',
-    },
-    paymentAmount: {
-        color: '#4CAF50',
     },
     emptyText: {
         fontStyle: 'italic',
