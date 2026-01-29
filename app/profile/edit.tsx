@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function EditProfileScreen() {
-    const { user, signIn } = useAuth();
+    const { user } = useAuth();
     const router = useRouter();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
@@ -22,7 +22,7 @@ export default function EditProfileScreen() {
 
         setLoading(true);
         try {
-            const updatedUser = await api.put('/auth/profile', { name, email });
+            await api.put('/auth/profile', { name, email });
             // Update local auth state (mocking signIn to refresh user)
             // Ideally useAuth should have an 'updateUser' method, but for now we might need to rely on the backend response
             // For this project, assuming signIn updates the context properly if we pass the new user object or similar.

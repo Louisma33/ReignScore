@@ -1,0 +1,2 @@
+npx expo lint --max-warnings=0
+npx tsc --noEmit

@@ -31,11 +31,9 @@ export function TransactionList({ limit, search, startDate, endDate }: Transacti
     const successColor = useThemeColor({}, 'success');
     const textColor = useThemeColor({}, 'text');
 
-    useEffect(() => {
-        fetchTransactions();
-    }, [limit, search, startDate, endDate]);
 
-    const fetchTransactions = async () => {
+
+    const fetchTransactions = React.useCallback(async () => {
         try {
             const params = new URLSearchParams();
             if (limit) params.append('limit', limit.toString());
@@ -56,7 +54,11 @@ export function TransactionList({ limit, search, startDate, endDate }: Transacti
         } finally {
             setLoading(false);
         }
-    };
+    }, [limit, search, startDate, endDate]);
+
+    useEffect(() => {
+        fetchTransactions();
+    }, [limit, search, startDate, endDate, fetchTransactions]);
 
     if (loading) {
         return (

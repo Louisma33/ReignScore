@@ -16,7 +16,6 @@ type BudgetLimit = {
 export default function BudgetScreen() {
     const [limits, setLimits] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         loadLimits();
@@ -41,15 +40,12 @@ export default function BudgetScreen() {
         const numericAmount = parseFloat(amount);
         if (isNaN(numericAmount)) return; // Ignore invalid input
 
-        setSaving(true);
         try {
             await api.post('/budgets', { category, amount: numericAmount });
             setLimits(prev => ({ ...prev, [category]: amount }));
         } catch (e) {
             console.error(e);
             // Don't show alert on blur to avoid annoyance, just log
-        } finally {
-            setSaving(false);
         }
     };
 

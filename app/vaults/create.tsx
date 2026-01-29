@@ -13,7 +13,7 @@ export default function CreateVaultScreen() {
     const [name, setName] = useState('');
     const [target, setTarget] = useState('');
     const [selectedColor, setSelectedColor] = useState(COLORS[0]);
-    const [selectedIcon, setSelectedIcon] = useState(ICONS[0]);
+    // const [selectedIcon, setSelectedIcon] = useState(ICONS[0]);
     const [submitting, setSubmitting] = useState(false);
     const router = useRouter();
 
@@ -28,7 +28,7 @@ export default function CreateVaultScreen() {
                 name,
                 target_amount: parseFloat(target),
                 color: selectedColor,
-                icon: selectedIcon
+                icon: ICONS[0] // Default since we removed state
             });
             router.back();
         } catch (e) {

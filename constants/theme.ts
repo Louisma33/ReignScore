@@ -10,38 +10,45 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   common: {
-    gold: '#FFD700', // Classic bright gold
+    primary: '#004977', // Capital One Blue
+    accent: '#D03027',  // Capital One Red
     black: '#000000',
     white: '#FFFFFF',
-    textGray: '#888888',
+    textGray: '#666666',
+    darkGray: '#333333',
+    lightGray: '#E2E8F0',
+    placeholder: '#999999',
+    gold: '#FFD700',
   },
   light: {
-    text: '#11181C',       // Dark Slate
-    background: '#F8F9FA', // Porcelain / Off-White (Standard Fintech Light)
-    card: '#FFFFFF',       // Pure White Cards
-    action: '#FFFFFF',     // Action text (on buttons)
+    text: '#333333',       // Dark Gray
+    background: '#F4F5F7', // Light Gray (App Background)
+    card: '#FFFFFF',       // White (Card Background)
+    action: '#FFFFFF',     // White text on actions
     input: '#FFFFFF',      // White inputs
-    border: '#E2E8F0',     // Light Slate Border
-    tint: '#B8860B',       // Dark Goldenrod (Metallic Gold) - readable on white
+    border: '#E0E0E0',     // Light Grey Border
+    tint: '#004977',       // Capital One Blue
     icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: '#B8860B',
-    success: '#15803D',    // Deep Green
-    error: '#DC2626',      // Deep Red
+    tabIconDefault: '#9BA1A6',
+    tabIconSelected: '#004977', // Blue
+    success: '#00A859',    // Keep Green for financial success
+    error: '#D03027',      // Capital One Red for errors/alerts
+    cardText: '#333333',   // Text on cards (Dark on White)
   },
   dark: {
     text: '#ECEDEE',
-    background: '#09090B', // Rich Black (Zinc-950)
-    card: '#18181B',       // Zinc-900 Cards
+    background: '#151718',
+    card: '#FFD700',       // Gold (Card Background)
     action: '#000000',
-    input: '#18181B',
-    border: '#27272A',
-    tint: '#FFD700',       // Bright Gold
-    icon: '#9BA1A6',
+    input: '#252525',
+    border: '#333333',
+    tint: '#FFD700',       // Gold tint? Or keep Blue? Let's try Gold for consistency
+    icon: '#4A4A4A',       // Darker icons for Gold backgrounds if used there?
     tabIconDefault: '#9BA1A6',
-    tabIconSelected: '#FFD700',
-    success: '#4ADE80',    // Bright Neon Green
-    error: '#EF4444',      // Bright Red
+    tabIconSelected: '#FFD700', // Gold
+    success: '#00A859',
+    error: '#D03027',      // Red
+    cardText: '#1A1A1A',   // Text on cards (Dark on Gold)
   },
 };
 

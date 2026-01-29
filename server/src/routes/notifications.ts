@@ -4,6 +4,25 @@ import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
+// Save Push Token
+router.post('/push-token', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+        const { token } = req.body;
+        if (!token) {
+            return res.status(400).json({ message: 'Token is required' });
+        }
+
+        await query(
+            'UPDATE users SET push_token = $1 WHERE id = $2',
+            [token, req.user.id]
+        );
+        res.json({ message: 'Push token saved' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Get all notifications
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {

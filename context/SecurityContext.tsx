@@ -79,7 +79,7 @@ export function SecurityProvider({ children }: { children: React.ReactNode }) {
     const authenticate = async (): Promise<boolean> => {
         try {
             const result = await LocalAuthentication.authenticateAsync({
-                promptMessage: 'Authenticate to access CardReign',
+                promptMessage: 'Authenticate to access ReignScore',
                 fallbackLabel: 'Use Passcode',
             });
             if (result.success) {
@@ -152,7 +152,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
     return (
         <View style={styles.container}>
             <IconSymbol name="lock.fill" size={80} color="#D4AF37" />
-            <Text style={styles.text}>CardReign Locked</Text>
+            <Text style={styles.text}>ReignScore Locked</Text>
             <Button title="Unlock" onPress={onUnlock} color="#D4AF37" />
         </View>
     );

@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo   CardReign Home Office Restore Script
+echo   ReignScore Home Office Restore Script
 echo ==========================================
 echo.
 

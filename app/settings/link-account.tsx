@@ -2,10 +2,11 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { api } from '@/services/api';
+import { create, LinkExit, LinkSuccess, open } from '@/utils/plaid-sdk';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { create, LinkExit, LinkSuccess, open } from 'react-native-plaid-link-sdk';
 
 export default function LinkAccountScreen() {
     const router = useRouter();
@@ -33,12 +34,15 @@ export default function LinkAccountScreen() {
             if (!linkToken) return;
         }
 
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
         setStatus('loading');
         try {
             await create({ token: linkToken });
             await open({
                 onSuccess: async (success: LinkSuccess) => {
                     console.log('Plaid Link Success:', success);
+                    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                     await exchangePublicToken(success.publicToken, success.metadata);
                 },
                 onExit: (exit: LinkExit) => {

@@ -1,3 +1,4 @@
+import compression from 'compression'; // Performance: Gzip compression
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -20,10 +21,33 @@ import plastiqRoutes from './routes/plastiq';
 import rewardsRoutes from './routes/rewards';
 import transactionsRoutes from './routes/transactions';
 
+import rateLimit from 'express-rate-limit'; // Security: Rate limiting
+
 app.use(helmet());
+app.use(compression()); // Apply compression
 app.use(cors());
 app.use(express.json());
 
+// Global Rate Limiter: 150 requests per 15 minutes
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5000, // Increased for dev/testing
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many requests, please try again later.' }
+});
+
+// Auth Rate Limiter: 10 attempts per hour
+const authLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 1000, // Increased for dev/testing
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many login attempts, please try again later.' }
+});
+
+// app.use(limiter); // Apply global limiter
+// app.use('/auth', authLimiter); // Apply stricter limiter to auth
 app.use('/auth', authRoutes);
 app.use('/cards', cardsRoutes);
 app.use('/notifications', notificationsRoutes);
@@ -38,7 +62,7 @@ app.use('/transactions', transactionsRoutes);
 app.use('/plaid', plaidRoutes);
 
 app.get('/', (req, res) => {
-    res.json({ message: 'CardReign API is running' });
+    res.json({ message: 'ReignScore API is running' });
 });
 
 app.get('/health', async (req, res) => {

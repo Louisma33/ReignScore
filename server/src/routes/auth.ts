@@ -45,7 +45,9 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res: Response
     }
 });
 
-router.post('/signup', async (req: Request, res: Response) => {
+import { validateRequest } from '../middleware/validation';
+
+router.post('/signup', validateRequest(['name', 'email', 'password']), async (req: Request, res: Response) => {
     try {
         const { name, email, password } = req.body;
 
@@ -83,7 +85,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     }
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', validateRequest(['email', 'password']), async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
 
@@ -115,6 +117,31 @@ router.post('/login', async (req: Request, res: Response) => {
                 email: user.email,
             },
         });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.post('/forgot-password', validateRequest(['email']), async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+
+        // Check user
+        const result = await query('SELECT * FROM users WHERE email = $1', [email]);
+        if (result.rows.length === 0) {
+            // Determine if we should reveal this. For security, usually returns success.
+            // But for dev friendliness, we might want to know.
+            // Stick to standard security practice: don't reveal user existence.
+            return res.json({ message: 'If an account exists with this email, a reset link has been sent.' });
+        }
+
+        // TODO: Generate reset token and send email
+        // For now, just simulate success
+
+        console.log(`[Mock Email] Password reset requested for: ${email}`);
+
+        res.json({ message: 'If an account exists with this email, a reset link has been sent.' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

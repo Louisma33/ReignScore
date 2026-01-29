@@ -36,7 +36,6 @@ const BRAND_COLORS: Record<string, string> = {
 
 export function MerchantLogo({ name, size = 40 }: MerchantLogoProps) {
     const [imageError, setImageError] = useState(false);
-    const cardColor = useThemeColor({}, 'card');
     const border = useThemeColor({}, 'border');
 
     // Normalize name to find domain

@@ -1,18 +1,22 @@
 {
   "expo": {
-    "name": "CardReign",
+    "name": "ReignScore",
     "slug": "CardReign",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "cardreign",
+    "scheme": "reignscore",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.williaml33.CardReign",
+      "bundleIdentifier": "com.williaml33.ReignScore",
+      "jsEngine": "hermes",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "android": {
@@ -22,6 +26,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "package": "com.williaml33.ReignScore",
+      "jsEngine": "hermes",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -43,7 +49,14 @@
           }
         }
       ],
-      "expo-secure-store",
+      [
+        "expo-secure-store",
+        {
+          "ios": {
+            "keychainAccessible": "AFTER_FIRST_UNLOCK"
+          }
+        }
+      ],
       [
         "expo-build-properties",
         {
@@ -55,6 +68,12 @@
             "targetSdkVersion": 35,
             "minSdkVersion": 21
           }
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow ReignScore to use Face ID for secure access."
         }
       ],
       "./plugins/withPlaid"

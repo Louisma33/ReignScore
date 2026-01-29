@@ -1,7 +1,7 @@
 
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
@@ -22,13 +22,21 @@ export default function AddCardScreen() {
         }
 
         if (endingDigits.length !== 4) {
-            Alert.alert('Error', 'Ending digits must be exactly 4 numbers');
+            if (Platform.OS === 'web') {
+                window.alert('Ending digits must be exactly 4 numbers');
+            } else {
+                Alert.alert('Error', 'Ending digits must be exactly 4 numbers');
+            }
             return;
         }
 
         const dueDayNum = parseInt(dueDay);
         if (isNaN(dueDayNum) || dueDayNum < 1 || dueDayNum > 31) {
-            Alert.alert('Error', 'Due day must be between 1 and 31');
+            if (Platform.OS === 'web') {
+                window.alert('Due day must be between 1 and 31');
+            } else {
+                Alert.alert('Error', 'Due day must be between 1 and 31');
+            }
             return;
         }
 
@@ -47,15 +55,28 @@ export default function AddCardScreen() {
             console.log('Add card result:', result);
 
             if (result && result.id) {
-                Alert.alert('Success', 'Card Added Successfully!', [
-                    { text: 'OK', onPress: () => router.back() }
-                ]);
+                if (Platform.OS === 'web') {
+                    window.alert('Card Added Successfully!');
+                    router.back();
+                } else {
+                    Alert.alert('Success', 'Card Added Successfully!', [
+                        { text: 'OK', onPress: () => router.back() }
+                    ]);
+                }
             } else {
-                Alert.alert('Error', result.error || 'Failed to add card');
+                if (Platform.OS === 'web') {
+                    window.alert(result.error || 'Failed to add card');
+                } else {
+                    Alert.alert('Error', result.error || 'Failed to add card');
+                }
             }
         } catch (error) {
             console.error(error);
-            Alert.alert('Error', 'Network error or server unreachable');
+            if (Platform.OS === 'web') {
+                window.alert('Network error or server unreachable');
+            } else {
+                Alert.alert('Error', 'Network error or server unreachable');
+            }
         } finally {
             setLoading(false);
         }

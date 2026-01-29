@@ -27,6 +27,9 @@ const MAPPING = {
   'moon.fill': 'dark-mode',
   'faceid': 'face',
   'chart.pie.fill': 'pie-chart',
+  'shield.checkerboard': 'security',
+  'building.columns.fill': 'account-balance',
+  'square.and.arrow.up': 'share',
 } as IconMapping;
 
 /**

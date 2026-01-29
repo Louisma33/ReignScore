@@ -1,7 +1,7 @@
 
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
@@ -16,7 +16,11 @@ export default function SignupScreen() {
 
     const handleSignup = async () => {
         if (!name || !email || !password) {
-            Alert.alert('Error', 'Please fill in all fields');
+            if (Platform.OS === 'web') {
+                window.alert('Please fill in all fields');
+            } else {
+                Alert.alert('Error', 'Please fill in all fields');
+            }
             return;
         }
 
@@ -27,11 +31,19 @@ export default function SignupScreen() {
                 await signIn(response.token);
                 router.replace('/(tabs)');
             } else {
-                Alert.alert('Signup Failed', response.message || 'Could not create account');
+                if (Platform.OS === 'web') {
+                    window.alert(response.message || 'Could not create account');
+                } else {
+                    Alert.alert('Signup Failed', response.message || 'Could not create account');
+                }
             }
         } catch (error) {
             console.error(error);
-            Alert.alert('Error', 'Connection failed');
+            if (Platform.OS === 'web') {
+                window.alert('Connection failed');
+            } else {
+                Alert.alert('Error', 'Connection failed');
+            }
         } finally {
             setLoading(false);
         }
@@ -40,9 +52,9 @@ export default function SignupScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
-                <Text style={styles.title}>CardReign</Text>
+                <Text style={styles.title}>ReignScore</Text>
                 <Image
-                    source={require('../../assets/images/card-reign-premium.png')}
+                    source={require('../../assets/images/reign-score-premium.png')}
                     style={styles.logo}
                     resizeMode="contain"
                 />

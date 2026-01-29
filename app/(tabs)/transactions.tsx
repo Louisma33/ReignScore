@@ -1,19 +1,30 @@
 
 import { DonutChart } from '@/components/DonutChart';
 import { LineChart } from '@/components/LineChart';
+import { MerchantLogo } from '@/components/MerchantLogo';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { TransactionList } from '@/components/TransactionList';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { SafeLink } from '@/components/ui/SafeLink';
+import { getRandomSlogan } from '@/constants/slogans';
+import { Colors } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
-import { Link } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 type CategoryStat = {
     category: string;
-    total: string; // comes as string from DB sum
+    total: string;
+};
+
+type Transaction = {
+    id: number;
+    amount: string;
+    currency: string;
+    description: string;
+    type: string;
+    created_at: string;
 };
 
 const getDateRange = (range: 'this-month' | 'last-month' | 'all') => {
@@ -35,45 +46,264 @@ const getDateRange = (range: 'this-month' | 'last-month' | 'all') => {
 };
 
 export default function TransactionsScreen() {
+    // Stats State
     const [stats, setStats] = useState<CategoryStat[]>([]);
     const [trend, setTrend] = useState<any[]>([]);
+    const [utilizationTrend, setUtilizationTrend] = useState<any[]>([]);
     const [timeRange, setTimeRange] = useState<'this-month' | 'last-month' | 'all'>('this-month');
-    const [searchQuery, setSearchQuery] = useState('');
-    const colorScheme = useColorScheme();
+    const [trendMode, setTrendMode] = useState<'spending' | 'utilization'>('spending');
+    const [regalSlogan, setRegalSlogan] = useState('');
 
     useEffect(() => {
-        loadStats();
-    }, [timeRange]);
+        setRegalSlogan(getRandomSlogan());
+    }, []);
 
-    const loadStats = async () => {
+    const getTrendInfo = () => {
+        if (trendMode === 'spending') {
+            return { color: Colors.common.gold, summary: '' };
+        }
+        if (utilizationTrend.length < 2) return { color: Colors.common.gold, summary: 'Not enough data yet.' };
+
+        const start = utilizationTrend[0].value;
+        const end = utilizationTrend[utilizationTrend.length - 1].value;
+        const improved = end < start;
+
+        return {
+            color: improved ? '#34C759' : '#FF3B30', // Green if dropped, Red if rose
+            summary: improved
+                ? `Utilization dropped – ${regalSlogan}`
+                : `Utilization rose – time to reign it in!`
+        };
+    };
+
+    const { color: chartColor, summary } = getTrendInfo();
+
+    // Transactions State
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
+    // Theme Colors
+    const cardColor = useThemeColor({}, 'card');
+    const cardTextColor = useThemeColor({}, 'cardText');
+    const actionColor = useThemeColor({}, 'action');
+    // const tintColor = useThemeColor({}, 'tint');
+    const borderColor = useThemeColor({}, 'border');
+    const successColor = useThemeColor({}, 'success');
+    const textColor = useThemeColor({}, 'text');
+
+    const loadData = useCallback(async () => {
         try {
             const { startDate, endDate } = getDateRange(timeRange);
-            let url = '/transactions/stats';
+
+            // Prepare URLs
+            let statsUrl = '/transactions/stats';
             let trendUrl = '/transactions/stats/trend';
+            let utilizationUrl = '/transactions/stats/utilization';
+            let txUrl = '/transactions';
 
             const params = new URLSearchParams();
             if (startDate) params.append('startDate', startDate);
             if (endDate) params.append('endDate', endDate);
 
-            const queryString = params.toString();
-            if (queryString) {
-                url += `?${queryString}`;
-                trendUrl += `?${queryString}`;
+            // For stats/trend
+            const statsParams = params.toString();
+            if (statsParams) {
+                statsUrl += `?${statsParams}`;
+                trendUrl += `?${statsParams}`;
+                // Utilization currently defaults to 30 days but we could pass query too if we want dynamic range
+                // For now, let's keep it simple or align with range
             }
 
-            const [statsData, trendData] = await Promise.all([
-                api.get(url),
-                api.get(trendUrl)
-            ]);
+            // For transactions list (separate params potentially)
+            const txParams = new URLSearchParams();
+            if (searchQuery) txParams.append('search', searchQuery);
+            // Optional: You might want list to match the date range too? 
+            // The original logic didn't seem to link them explicitly in UI, but usually they should differ.
+            // Keeping them independent allows user to search ALL history while viewing this month's stats.
+
+            // Initial fetch limit
+            txParams.append('limit', '50');
+
+            const promises = [
+                api.get(statsUrl),
+                api.get(trendUrl),
+                api.get(utilizationUrl),
+                api.get(`${txUrl}?${txParams.toString()}`)
+            ];
+
+            const [statsData, trendData, utilData, txData] = await Promise.all(promises);
 
             setStats(statsData);
             setTrend(trendData);
+            if (Array.isArray(utilData)) setUtilizationTrend(utilData);
+            if (Array.isArray(txData)) {
+                setTransactions(txData);
+            }
         } catch (e) {
-            console.error('Failed to load stats', e);
+            console.error('Failed to load data', e);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
         }
+    }, [timeRange, searchQuery]);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        loadData();
     };
 
-    const maxTotal = Math.max(...stats.map(s => parseFloat(s.total) || 0));
+    const renderHeader = () => (
+        <View>
+            <ThemedView style={styles.statsContainer}>
+                <ThemedText type="subtitle" style={{ marginBottom: 20 }}>Spending by Category</ThemedText>
+
+                <View style={styles.filterContainer}>
+                    {(['this-month', 'last-month', 'all'] as const).map(range => (
+                        <TouchableOpacity
+                            key={range}
+                            style={[styles.filterButton, timeRange === range && styles.activeFilter]}
+                            onPress={() => setTimeRange(range)}
+                        >
+                            <ThemedText style={[styles.filterText, timeRange === range && styles.activeFilterText]}>
+                                {range === 'this-month' ? 'This Month' : range === 'last-month' ? 'Last Month' : 'All'}
+                            </ThemedText>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                {timeRange === 'this-month' && (
+                    <SafeLink href="/budget" asChild style={[styles.budgetWidget, { backgroundColor: cardColor }]}>
+                        <TouchableOpacity>
+                            <View style={styles.budgetRow}>
+                                <View style={styles.budgetIcon}>
+                                    <IconSymbol name="chart.pie.fill" size={20} color={actionColor} />
+                                </View>
+                                <View>
+                                    <ThemedText type="defaultSemiBold" style={{ color: cardTextColor }}>Monthly Budget</ThemedText>
+                                    <ThemedText style={{ color: cardTextColor, fontSize: 12, opacity: 0.8 }}>Tap to manage limits</ThemedText>
+                                </View>
+                            </View>
+                            <IconSymbol name="chevron.right" size={20} color={cardTextColor} />
+                        </TouchableOpacity>
+                    </SafeLink>
+                )}
+
+                {stats.length > 0 ? (
+                    <View style={styles.chartContainer}>
+                        <DonutChart
+                            data={stats.map(s => ({
+                                value: parseFloat(s.total),
+                                color: getCategoryColor(s.category),
+                                key: s.category
+                            }))}
+                            radius={100}
+                            strokeWidth={25}
+                            centerValue={`$${stats.reduce((sum, s) => sum + parseFloat(s.total), 0).toFixed(0)}`}
+                            textColor={cardTextColor}
+                        />
+                    </View>
+                ) : (
+                    <ThemedText style={{ textAlign: 'center', marginVertical: 20 }}>No spending data yet.</ThemedText>
+                )}
+
+                <View style={styles.legendContainer}>
+                    {stats.map((stat) => (
+                        <View key={stat.category} style={styles.statRow}>
+                            <View style={styles.leftCol}>
+                                <View style={[styles.colorDot, { backgroundColor: getCategoryColor(stat.category) }]} />
+                                <ThemedText style={styles.categoryText}>{stat.category}</ThemedText>
+                            </View>
+                            <ThemedText style={styles.statAmount}>${parseFloat(stat.total).toFixed(2)}</ThemedText>
+                        </View>
+                    ))}
+                </View>
+            </ThemedView>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, marginBottom: 10 }}>
+                <ThemedText type="subtitle">{trendMode === 'spending' ? 'Spending Trend' : 'Utilization Trend'}</ThemedText>
+                <View style={{ flexDirection: 'row', backgroundColor: '#333', borderRadius: 8, padding: 2 }}>
+                    <TouchableOpacity
+                        onPress={() => setTrendMode('spending')}
+                        style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 6,
+                            backgroundColor: trendMode === 'spending' ? Colors.common.gold : 'transparent'
+                        }}
+                    >
+                        <ThemedText style={{ fontSize: 12, color: trendMode === 'spending' ? '#000' : '#888', fontWeight: 'bold' }}>Spending</ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => setTrendMode('utilization')}
+                        style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 6,
+                            backgroundColor: trendMode === 'utilization' ? Colors.common.gold : 'transparent'
+                        }}
+                    >
+                        <ThemedText style={{ fontSize: 12, color: trendMode === 'utilization' ? '#000' : '#888', fontWeight: 'bold' }}>Utilization</ThemedText>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <ThemedView style={[styles.chartCard, { backgroundColor: cardColor }]}>
+                {trendMode === 'spending' ? (
+                    <LineChart data={trend} color={Colors.common.gold} valueFormatter={(v) => `$${v}`} />
+                ) : (
+                    <LineChart
+                        data={utilizationTrend}
+                        color={chartColor}
+                        valueFormatter={(v) => `${v.toFixed(1)}%`}
+                    />
+                )}
+                {trendMode === 'utilization' && (
+                    <View style={{ marginTop: 15, paddingHorizontal: 10, alignItems: 'center' }}>
+                        <ThemedText style={{ color: chartColor, fontWeight: 'bold', textAlign: 'center', marginBottom: 5 }}>
+                            {summary}
+                        </ThemedText>
+                    </View>
+                )}
+            </ThemedView>
+
+            <ThemedText type="subtitle" style={{ marginTop: 20, marginBottom: 10 }}>Transactions</ThemedText>
+
+            <View style={styles.searchContainer}>
+                <IconSymbol name="magnifyingglass" size={20} color="#888" />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Search transactions..."
+                    placeholderTextColor="#666"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+            </View>
+        </View>
+    );
+
+    const renderItem = ({ item }: { item: Transaction }) => (
+        <View style={[styles.transactionItem, { borderBottomColor: borderColor }]}>
+            <View style={styles.leftContent}>
+                <MerchantLogo name={item.description} />
+                <View style={styles.textContent}>
+                    <ThemedText type="defaultSemiBold">{item.description}</ThemedText>
+                    <ThemedText style={styles.date}>{new Date(item.created_at).toLocaleDateString()}</ThemedText>
+                </View>
+            </View>
+            <ThemedText
+                type="defaultSemiBold"
+                style={{ color: item.type === 'payment' ? successColor : textColor }}
+            >
+                {item.type === 'payment' ? '+' : '-'}${parseFloat(item.amount).toFixed(2)}
+            </ThemedText>
+        </View>
+    );
 
     return (
         <ThemedView style={styles.container}>
@@ -81,92 +311,29 @@ export default function TransactionsScreen() {
                 <ThemedText type="title">Activity</ThemedText>
             </ThemedView>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <ThemedView style={styles.statsContainer}>
-                    <ThemedText type="subtitle" style={{ marginBottom: 20 }}>Spending by Category</ThemedText>
-
-                    <View style={styles.filterContainer}>
-                        {(['this-month', 'last-month', 'all'] as const).map(range => (
-                            <TouchableOpacity
-                                key={range}
-                                style={[styles.filterButton, timeRange === range && styles.activeFilter]}
-                                onPress={() => setTimeRange(range)}
-                            >
-                                <ThemedText style={[styles.filterText, timeRange === range && styles.activeFilterText]}>
-                                    {range === 'this-month' ? 'This Month' : range === 'last-month' ? 'Last Month' : 'All'}
-                                </ThemedText>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-
-                    {/* Budget Widget Link */}
-                    {timeRange === 'this-month' && (
-                        <Link href="/budget" asChild>
-                            <TouchableOpacity style={styles.budgetWidget}>
-                                <View style={styles.budgetRow}>
-                                    <View style={styles.budgetIcon}>
-                                        <IconSymbol name="chart.pie.fill" size={20} color="#000" />
-                                    </View>
-                                    <View>
-                                        <ThemedText type="defaultSemiBold">Monthly Budget</ThemedText>
-                                        <ThemedText style={{ color: '#888', fontSize: 12 }}>Tap to manage limits</ThemedText>
-                                    </View>
-                                </View>
-                                <IconSymbol name="chevron.right" size={20} color="#666" />
-                            </TouchableOpacity>
-                        </Link>
-                    )}
-
-                    {stats.length > 0 ? (
-                        <View style={styles.chartContainer}>
-                            <DonutChart
-                                data={stats.map(s => ({
-                                    value: parseFloat(s.total),
-                                    color: getCategoryColor(s.category),
-                                    key: s.category
-                                }))}
-                                radius={100}
-                                strokeWidth={25}
-                                centerValue={`$${stats.reduce((sum, s) => sum + parseFloat(s.total), 0).toFixed(0)}`}
-                            />
-                        </View>
+            <FlatList
+                data={transactions}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+                ListHeaderComponent={renderHeader}
+                contentContainerStyle={styles.scrollContent}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFD700" />
+                }
+                ListEmptyComponent={
+                    !loading ? (
+                        <ThemedText style={{ textAlign: 'center', opacity: 0.7, marginTop: 20 }}>
+                            No transactions found.
+                        </ThemedText>
                     ) : (
-                        <ThemedText style={{ textAlign: 'center', marginVertical: 20 }}>No spending data yet.</ThemedText>
-                    )}
-
-                    <View style={styles.legendContainer}>
-                        {stats.map((stat, index) => (
-                            <View key={stat.category} style={styles.statRow}>
-                                <View style={styles.leftCol}>
-                                    <View style={[styles.colorDot, { backgroundColor: getCategoryColor(stat.category) }]} />
-                                    <ThemedText style={styles.categoryText}>{stat.category}</ThemedText>
-                                </View>
-                                <ThemedText style={styles.statAmount}>${parseFloat(stat.total).toFixed(2)}</ThemedText>
-                            </View>
-                        ))}
-                    </View>
-                </ThemedView>
-
-                <ThemedText type="subtitle" style={{ marginTop: 20, marginBottom: 10 }}>Spending Trend</ThemedText>
-                <ThemedView style={styles.chartCard}>
-                    <LineChart data={trend} />
-                </ThemedView>
-
-                <ThemedText type="subtitle" style={{ marginTop: 20, marginBottom: 10 }}>Transactions</ThemedText>
-
-                <View style={styles.searchContainer}>
-                    <IconSymbol name="magnifyingglass" size={20} color="#888" />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search transactions..."
-                        placeholderTextColor="#666"
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                </View>
-
-                <TransactionList limit={20} search={searchQuery} />
-            </ScrollView>
+                        <ActivityIndicator style={{ marginTop: 20 }} color="#FFD700" />
+                    )
+                }
+                removeClippedSubviews={true} // Performance optimization
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+            />
         </ThemedView>
     );
 }
@@ -284,7 +451,27 @@ const styles = StyleSheet.create({
         flex: 1,
         color: '#FFF',
         fontSize: 16
-    }
+    },
+    // Transaction Item Styles
+    transactionItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+    },
+    leftContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    textContent: {
+        gap: 2,
+    },
+    date: {
+        fontSize: 12,
+        opacity: 0.7,
+    },
 });
 
 const CATEGORY_COLORS: Record<string, string> = {

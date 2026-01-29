@@ -1,9 +1,8 @@
 
-
 import * as SecureStore from 'expo-secure-store';
 
-// Use local IP for Android emulator, localhost for iOS/Web
-export const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://fad4e6be17973095-50-172-28-210.serveousercontent.com';
+// Use local IP for Physical Device testing
+export const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 const getToken = async () => {
     try {
@@ -34,9 +33,27 @@ export const api = {
         try {
             return JSON.parse(text);
         } catch (e) {
-            console.error('Failed to parse JSON response:', text.substring(0, 200));
+            console.error('Failed to parse JSON response from', endpoint, 'Response:', text.substring(0, 200));
+            // If it's the tunnel reminder or other HTML, throw a clear error
+            if (text.includes('localtunnel') || text.includes('DOCTYPE html')) {
+                throw new Error(`Tunnel Error: Please visit ${API_URL} to bypass reminder.`);
+            }
             throw new Error(`Invalid JSON response from ${endpoint}: ${text.substring(0, 50)}`);
         }
+    },
+
+    getRaw: async (endpoint: string, token?: string) => {
+        const headers: any = {
+            'Bypass-Tunnel-Reminder': 'true'
+        };
+        const authToken = token || await getToken();
+        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
+        const response = await fetch(`${API_URL}${endpoint}`, {
+            method: 'GET',
+            headers,
+        });
+        return response.text();
     },
 
     post: async (endpoint: string, body: any, token?: string) => {
@@ -56,7 +73,10 @@ export const api = {
         try {
             return JSON.parse(text);
         } catch (e) {
-            console.error('Failed to parse JSON response:', text.substring(0, 200));
+            console.error('Failed to parse JSON response from', endpoint, 'Response:', text.substring(0, 200));
+            if (text.includes('localtunnel') || text.includes('DOCTYPE html')) {
+                throw new Error(`Tunnel Error: Please visit ${API_URL} to bypass reminder.`);
+            }
             throw new Error(`Invalid JSON response: ${text.substring(0, 50)}`);
         }
     },

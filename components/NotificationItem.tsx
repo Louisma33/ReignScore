@@ -2,6 +2,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -17,30 +18,35 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification, onPress }: NotificationItemProps) {
+    const cardColor = useThemeColor({}, 'card');
+    const cardTextColor = useThemeColor({}, 'cardText');
+
     return (
         <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-            <ThemedView style={[styles.container, !notification.is_read && styles.unread]}>
+            <ThemedView style={[styles.container, { backgroundColor: cardColor, borderColor: notification.is_read ? 'transparent' : '#FF3B30' }]}>
                 <View style={styles.iconContainer}>
                     <IconSymbol
                         name={notification.is_read ? "envelope.open" : "envelope.fill"}
                         size={24}
-                        color={notification.is_read ? '#666' : '#FFD700'}
+                        color={cardTextColor}
                     />
                 </View>
                 <View style={styles.contentContainer}>
                     <View style={styles.header}>
-                        <ThemedText type="defaultSemiBold" style={styles.title}>{notification.title}</ThemedText>
-                        <ThemedText style={styles.date}>
+                        <ThemedText type="defaultSemiBold" style={[styles.title, { color: cardTextColor }]}>{notification.title}</ThemedText>
+                        <ThemedText style={[styles.date, { color: cardTextColor }]}>
                             {new Date(notification.created_at).toLocaleDateString()}
                         </ThemedText>
                     </View>
-                    <ThemedText style={styles.message} numberOfLines={2}>{notification.message}</ThemedText>
+                    <ThemedText style={[styles.message, { color: cardTextColor }]} numberOfLines={2}>{notification.message}</ThemedText>
                 </View>
-                {!notification.is_read && <View style={styles.dot} />}
+                {!notification.is_read && <View style={[styles.dot, { backgroundColor: '#FF3B30' }]} />}
             </ThemedView>
         </TouchableOpacity>
     );
 }
+
+
 
 const styles = StyleSheet.create({
     container: {
@@ -48,14 +54,14 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 12,
         marginBottom: 12,
-        backgroundColor: '#1c1c1e', // Slightly lighter than black background
-        borderWidth: 1,
-        borderColor: '#333',
         alignItems: 'center',
-    },
-    unread: {
-        borderColor: '#FFD700',
-        backgroundColor: '#2c2c2e',
+        borderWidth: 1,
+        // Shadow for depth
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
     },
     iconContainer: {
         marginRight: 16,
@@ -68,26 +74,27 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: 4,
     },
     title: {
-        color: '#fff',
+        fontSize: 16,
         flex: 1,
     },
     date: {
         fontSize: 12,
-        color: '#888',
         marginLeft: 8,
     },
     message: {
         fontSize: 14,
-        color: '#ccc',
+        lineHeight: 20,
     },
     dot: {
-        width: 6,
-        height: 6,
+        width: 8,
+        height: 8,
         borderRadius: 4,
-        backgroundColor: '#FFD700',
-        marginLeft: 8,
-    },
+        position: 'absolute',
+        top: 12,
+        right: 12,
+    }
 });

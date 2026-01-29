@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import { Pool } from 'pg';
 
 dotenv.config();
 
@@ -8,7 +8,7 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD || 'password',
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
-    database: process.env.DB_NAME || 'cardreign',
+    database: process.env.DB_NAME || 'reignscore',
 });
 
 export const query = (text: string, params?: any[]) => pool.query(text, params);

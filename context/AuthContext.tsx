@@ -26,17 +26,25 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<any | null>(null);
+    // DEBUG: Bypassed loading check (Reverting to true)
     const [isLoading, setIsLoading] = useState(true);
 
     // Load token on startup
     useEffect(() => {
         async function loadToken() {
+            console.log('Auth: loadToken started');
             try {
                 let storedToken = null;
                 if (typeof window !== 'undefined' && window.localStorage) {
                     storedToken = localStorage.getItem('userToken');
                 } else {
-                    storedToken = await SecureStore.getItemAsync('userToken');
+                    console.log('Auth: Loading from SecureStore');
+                    // Add shorter timeout for dev tunnel stability
+                    const tokenPromise = SecureStore.getItemAsync('userToken');
+                    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 2500));
+
+                    storedToken = await Promise.race([tokenPromise, timeoutPromise]) as string | null;
+                    console.log('Auth: SecureStore result:', storedToken ? 'Found' : 'Null (or Timeout)');
                 }
 
                 if (storedToken) {
@@ -47,16 +55,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } catch (e) {
                 console.error('Failed to load token', e);
             } finally {
+                console.log('Auth: loadToken finished, setting isLoading false');
                 setIsLoading(false);
             }
         }
         loadToken();
     }, []);
 
-    // Fetch user details when token changes
+    // Verify token validity on mount/change
     useEffect(() => {
         if (token) {
-            refreshUser();
+            refreshUser().catch(() => {
+                console.log('Auth: Token invalid on load, signing out');
+                signOut();
+            });
         } else {
             setUser(null);
         }

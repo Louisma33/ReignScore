@@ -26,7 +26,7 @@ export default function VaultDetailScreen() {
     const router = useRouter();
 
     // Theme Colors
-    const backgroundColor = useThemeColor({}, 'background');
+    // Theme Colors
     const cardColor = useThemeColor({}, 'card');
     const inputColor = useThemeColor({}, 'input');
     const borderColor = useThemeColor({}, 'border');
@@ -35,11 +35,9 @@ export default function VaultDetailScreen() {
     const tintColor = useThemeColor({}, 'tint');
     const actionTextColor = useThemeColor({}, 'action');
 
-    useEffect(() => {
-        loadGoal();
-    }, [id]);
 
-    const loadGoal = async () => {
+
+    const loadGoal = React.useCallback(async () => {
         try {
             const goals = await api.get('/goals');
             const found = goals.find((g: Goal) => g.id === Number(id));
@@ -51,7 +49,11 @@ export default function VaultDetailScreen() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        loadGoal();
+    }, [id, loadGoal]);
 
     const handleDeposit = async () => {
         if (!depositAmount || isNaN(Number(depositAmount)) || Number(depositAmount) <= 0) {
@@ -92,22 +94,34 @@ export default function VaultDetailScreen() {
     };
 
     const handleDelete = async () => {
-        Alert.alert('Delete Vault', 'Are you sure?', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                style: 'destructive',
-                onPress: async () => {
-                    try {
-                        await api.del(`/goals/${id}`);
-                        router.back();
-                    } catch (e) {
-                        console.error(e);
-                        Alert.alert('Error', 'Failed to delete');
-                    }
+        if (Platform.OS === 'web') {
+            if (window.confirm('Are you sure you want to delete this vault?')) {
+                try {
+                    await api.del(`/goals/${id}`);
+                    router.back();
+                } catch (e) {
+                    console.error(e);
+                    alert('Failed to delete');
                 }
             }
-        ]);
+        } else {
+            Alert.alert('Delete Vault', 'Are you sure?', [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await api.del(`/goals/${id}`);
+                            router.back();
+                        } catch (e) {
+                            console.error(e);
+                            Alert.alert('Error', 'Failed to delete');
+                        }
+                    }
+                }
+            ]);
+        }
     };
 
     if (loading) {

@@ -9,7 +9,7 @@ interface ThemeContextType {
     isDark: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextType>({
+export const ThemeContext = createContext<ThemeContextType>({
     theme: 'dark',
     setTheme: () => { },
     isDark: true,
@@ -17,12 +17,14 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const systemScheme = useNativeColorScheme();
-    const [theme, setTheme] = useState<Theme>(systemScheme === 'dark' ? 'dark' : 'light');
+    // Default to 'dark' to show the Gold theme immediately
+    const [theme, setTheme] = useState<Theme>('dark');
 
     useEffect(() => {
-        if (systemScheme) {
-            setTheme(systemScheme);
-        }
+        // Optional: Only sync if user hasn't manually set it (skipping complexity for now)
+        // if (systemScheme) {
+        //     setTheme(systemScheme);
+        // }
     }, [systemScheme]);
 
     const isDark = theme === 'dark';
