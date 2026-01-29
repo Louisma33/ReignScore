@@ -3,8 +3,8 @@ services:
     name: reignscore-api
     runtime: node
     rootDir: server
-    buildCommand: npm install --legacy-peer-deps && npm run build
-    startCommand: npm start
+    buildCommand: cd server && npm install --legacy-peer-deps && npm run build
+    startCommand: cd server && npm start
     plan: free
     region: oregon
     envVars:
