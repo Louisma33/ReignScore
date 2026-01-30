@@ -40,7 +40,7 @@
         "production": {
             "env": {
                 "APP_ENV": "production",
-                "API_URL": "https://api.reignscore.com",
+                "API_URL": "https://reignscores.onrender.com",
                 "PLAID_CLIENT_ID": "PLAID_CLIENT_ID",
                 "PLAID_SECRET": "PLAID_SECRET",
                 "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
