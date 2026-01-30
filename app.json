@@ -70,7 +70,6 @@
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
             "minSdkVersion": 26,
-            "kotlinVersion": "2.0.21"
           }
         }
       ],
