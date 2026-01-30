@@ -163,7 +163,7 @@ export default function InsightsScreen() {
                 <SafeLink href="/(tabs)/transactions" asChild>
                     <TouchableOpacity>
                         <Image
-                            source={require('../../assets/images/reign_score_premium.png')}
+                            source={require('../../assets/images/premium_v2.png')}
                             style={{ width: 40, height: 40 }}
                             resizeMode="contain"
                         />
