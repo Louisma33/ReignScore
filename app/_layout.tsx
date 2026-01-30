@@ -7,6 +7,7 @@ import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ThemeProvider as CustomThemeProvider, ThemeContext, useTheme } from '../context/ThemeContext';
+import '../polyfill';
 
 // Protected Layout Component
 function ProtectedLayout() {
