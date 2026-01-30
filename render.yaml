@@ -1,7 +1,7 @@
 # ReignScore Render Blueprint Configuration - Forced Update 2
 services:
   - type: web
-    name: reignscore-api-v2
+    name: reignscore-final-v3
     runtime: node
     rootDir: server
     buildCommand: cd server && npm install --legacy-peer-deps && npm run build
