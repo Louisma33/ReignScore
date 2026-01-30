@@ -54,7 +54,7 @@ export default function SignupScreen() {
             <View style={styles.logoContainer}>
                 <Text style={styles.title}>ReignScore</Text>
                 <Image
-                    source={require('../../assets/images/reign-score-premium.png')}
+                    source={require('../../assets/images/reign_score_premium.png')}
                     style={styles.logo}
                     resizeMode="contain"
                 />

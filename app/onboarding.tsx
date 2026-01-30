@@ -71,7 +71,7 @@ export default function OnboardingScreen() {
                         <View style={styles.iconContainer}>
                             {slide.id === '1' ? (
                                 <Image
-                                    source={require('@/assets/images/reignscore-logo.png')}
+                                    source={require('@/assets/images/reignscore_logo.png')}
                                     style={{ width: 100, height: 100, resizeMode: 'contain' }}
                                 />
                             ) : (
