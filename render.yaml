@@ -1,4 +1,4 @@
-# ReignScore Render Blueprint Configuration - Forced Update
+# ReignScore Render Blueprint Configuration - Forced Update 2
 services:
   - type: web
     name: reignscore-api
