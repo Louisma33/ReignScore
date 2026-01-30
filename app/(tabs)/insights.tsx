@@ -51,13 +51,7 @@ export default function InsightsScreen() {
     const cardColor = useThemeColor({}, 'card');
     const cardTextColor = useThemeColor({}, 'cardText');
 
-    useFocusEffect(
-        useCallback(() => {
-            loadData();
-        }, [])
-    );
-
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         try {
             setLoading(true);
 
@@ -89,7 +83,13 @@ export default function InsightsScreen() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [dateRange]);
+
+    useFocusEffect(
+        useCallback(() => {
+            loadData();
+        }, [loadData])
+    );
 
     const handleExport = async () => {
         try {

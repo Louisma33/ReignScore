@@ -45,7 +45,7 @@ export function LineChart({
     strokeWidth = 3,
     valueFormatter = (v) => `${v}`,
 }: LineChartProps) {
-    const { path, fillPath, points, yMaxScale } = useMemo(() => {
+    const { path, fillPath, points } = useMemo(() => {
         if (data.length === 0) {
             return { path: '', fillPath: '', points: [], yMaxScale: 1 };
         }

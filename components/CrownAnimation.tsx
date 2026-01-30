@@ -23,7 +23,7 @@ export function CrownAnimation({ trigger, onComplete }: CrownAnimationProps) {
             setTimeout(async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             }, 200);
-        } catch (e) {
+        } catch {
             // Ignore haptics errors (e.g. web)
         }
     };

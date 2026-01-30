@@ -9,14 +9,10 @@
             "distribution": "internal",
             "env": {
                 "APP_ENV": "development",
-                "API_URL": "http://localhost:3000",
-                "PLAID_CLIENT_ID": "PLAID_CLIENT_ID",
-                "PLAID_SECRET": "PLAID_SECRET",
+                "EXPO_PUBLIC_API_URL": "http://192.168.1.85:3000",
                 "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
             },
-            "ios": {
-                "simulator": true
-            },
+            "ios": {},
             "android": {
                 "buildType": "apk"
             }
@@ -25,9 +21,7 @@
             "distribution": "internal",
             "env": {
                 "APP_ENV": "preview",
-                "API_URL": "https://api.reignscore.com",
-                "PLAID_CLIENT_ID": "PLAID_CLIENT_ID",
-                "PLAID_SECRET": "PLAID_SECRET",
+                "EXPO_PUBLIC_API_URL": "https://reignscores.onrender.com",
                 "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
             },
             "android": {
@@ -40,9 +34,7 @@
         "production": {
             "env": {
                 "APP_ENV": "production",
-                "API_URL": "https://reignscores.onrender.com",
-                "PLAID_CLIENT_ID": "PLAID_CLIENT_ID",
-                "PLAID_SECRET": "PLAID_SECRET",
+                "EXPO_PUBLIC_API_URL": "https://reignscores.onrender.com",
                 "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
             },
             "android": {
