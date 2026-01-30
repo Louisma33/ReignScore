@@ -1,3 +1,4 @@
+# ReignScore Render Blueprint Configuration - Forced Update
 services:
   - type: web
     name: reignscore-api
