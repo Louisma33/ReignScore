@@ -82,3 +82,36 @@ CREATE TABLE IF NOT EXISTS plaid_items (
     institution_name VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Phase 5: Monetization & Subscriptions
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    stripe_customer_id VARCHAR(255),
+    stripe_subscription_id VARCHAR(255),
+    plan_type VARCHAR(50) DEFAULT 'free',
+    status VARCHAR(50) DEFAULT 'active',
+    current_period_end TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Phase 6: Differentiation & Gamification
+CREATE TABLE IF NOT EXISTS challenges (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    points INTEGER DEFAULT 0,
+    icon VARCHAR(50),
+    category VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_challenges (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    challenge_id INTEGER REFERENCES challenges(id) ON DELETE CASCADE,
+    status VARCHAR(50) DEFAULT 'in_progress',
+    progress INTEGER DEFAULT 0,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

@@ -121,6 +121,25 @@ export const api = {
     // Payment specific helpers
     processPayment: async (cardId: number, amount: number, token?: string) => {
         return api.post('/payments', { cardId, amount }, token);
+    },
+
+    // Subscription helpers
+    getSubscriptionStatus: async (token?: string) => {
+        return api.get('/subscriptions/status', token);
+    },
+
+    createCheckoutSession: async (plan: 'premium', token?: string) => {
+        return api.post('/subscriptions/create-checkout-session', { plan }, token);
+    },
+
+    // Simulator
+    simulateScore: async (data: { currentScore: number, action: string, amount?: number }, token?: string) => {
+        return api.post('/simulator', data, token);
+    },
+
+    // Challenges
+    getChallenges: async (token?: string) => {
+        return api.get('/challenges', token);
     }
 };
 

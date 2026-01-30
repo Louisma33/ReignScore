@@ -1,37 +1,48 @@
-# ReignScore - Release Candidate 1 Handover
+# ReignScore - Feature Release 1.1.0 Handover
 
-## Build Artifact
-**File**: `ReignScore.tar.gz`
-**Location**: Project Root (`C:\Users\1040g\Desktop\CardReign\`)
-**Size**: ~47 MB
-**Type**: iOS Simulator Build (x86_64 / arm64)
+## Overview
+ReignScore has been upgraded with **Monetization (Phase 5)** and **Differentiation (Phase 6)** features. This release introduces subscription tiers, credit simulators, and gamification challenges.
 
-## Installation Instructions (Mac Required)
-Since this is an iOS Simulator build, it must be installed on a macOS device running Xcode Simulator.
+## 🚀 New Features
+### 1. Noble Membership (Subscriptions)
+- **Integration**: Stripe-powered checkout flow.
+- **UI**: Premium "Reign Noble" upgrade screen using Gold theme.
+- **Backend**: `subscriptions` table and API endpoints (`/subscriptions/create-checkout-session`).
 
-1.  **Transfer**: Copy `ReignScore.tar.gz` to your Mac.
-2.  **Extract**: Double-click to unzip. You will see `ReignScore.app`.
-3.  **Launch Simulator**: Open your iOS Simulator.
-4.  **Install**: Drag `ReignScore.app` directly onto the Simulator window.
+### 2. Reign Score Simulator
+- **Functionality**: Simulate credit actions (Pay Debt, Open Card) to see potential score impact.
+- **Logic**: Intelligent heuristic model that adapts based on current score range (High/Low score tiers).
+- **UI**: Interactive input and result visualization.
 
-## Option 2: Run on Windows (via Cloud)
-If you do not have a Mac, you can run this build using an online simulator:
+### 3. Crown Challenges (Gamification)
+- **Concept**: Earn points by completing financial health tasks.
+- **Content**: 5 seeded challenges (e.g., "Utilization Master", "Debt Destroyer").
+- **UI**: Challenges list with "Join" status tracking.
 
-1.  **Go to**: [Appetize.io](https://appetize.io/upload)
-2.  **Upload**: Select the `ReignScore.tar.gz` file from your desktop.
-3.  **Run**: Once processed, you will get a link to run the iOS app directly in your browser.
-    *   *Note*: This allows you to verify the UI and Onboarding flow. Face ID features may be simulated or disabled depending on the cloud provider's support.
+## 🛠 Technical Updates
+- **Database**: Added `subscriptions`, `challenges`, and `user_challenges` tables.
+- **Plaid**: Fixed TypeScript definitions for Web/Native compatibility.
+- **Environment**: Updated `eas.json` with Production & Preview profiles for Stripe keys.
+- **Version**: Bumped to `1.1.0`.
 
-## Release Notes (Phase 4)
-- **Gold Theme**: Standardized across Login, Signup, Onboarding, and Settings.
-- **Biometrics**: Face ID enablement flow is fully native.
-- **Push Notifications**: Integrated and permission-ready.
-- **Onboarding**: "First Run" experience implemented.
+## 📦 Deployment Instructions
+1.  **Database**: Ensure migrations are run on production DB.
+    ```bash
+    npm run migrate
+    ```
+2.  **Environment Variables**:
+    - Add `STRIPE_SECRET_KEY` to the server environment (Render).
+    - Add `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` to build environment (EAS).
+3.  **Build**:
+    ```bash
+    eas build --profile production
+    ```
 
-## Verification Checklist
-- [ ] Launch app -> Verify "Reign Over Your Credit" onboarding slides.
-- [ ] Login -> Verify Face ID prompt.
-- [ ] Home -> Swipe down to refresh (check haptics/theme).
-- [ ] Settings -> Toggle "Face ID" on/off.
+## ✅ Verification Checklist
+- [x] Subscription screen loads and initiates Stripe Link.
+- [x] Simulator calculates positive/negative score changes correctly.
+- [x] Challenges list is populated and 'Join' updates UI.
+- [x] Settings menu links to all new tools.
+- [x] System health check passed (Expo Doctor).
 
-**Ready for QA.**
+**Ready for Production Deployment.**

@@ -202,6 +202,51 @@ export default function SettingsScreen() {
                     </ThemedView>
                 </View>
 
+                {/* Subscription Section */}
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>Membership</ThemedText>
+                    <ThemedView style={[styles.card, { backgroundColor: cardColor, borderColor: '#FFD700', borderWidth: 1 }]}>
+                        <SafeLink href="/premium" asChild>
+                            <TouchableOpacity style={[styles.item, { borderBottomWidth: 0 }]}>
+                                <View style={styles.itemRow}>
+                                    <IconSymbol name="crown.fill" size={24} color="#FFD700" />
+                                    <View>
+                                        <ThemedText style={[styles.itemText, { color: cardTextColor, fontWeight: 'bold' }]}>Manage Subscription</ThemedText>
+                                        <ThemedText style={{ fontSize: 12, color: '#888' }}>Upgrade to Noble</ThemedText>
+                                    </View>
+                                </View>
+                                <IconSymbol name="chevron.right" size={20} color={cardTextColor} />
+                            </TouchableOpacity>
+                        </SafeLink>
+                    </ThemedView>
+                </View>
+
+                {/* Features Section */}
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>Tools & Games</ThemedText>
+                    <ThemedView style={[styles.card, { backgroundColor: cardColor }]}>
+                        <SafeLink href="/simulator" asChild>
+                            <TouchableOpacity style={[styles.item, { borderBottomColor: 'rgba(0,0,0,0.1)' }]}>
+                                <View style={styles.itemRow}>
+                                    <IconSymbol name="chart.bar.xaxis" size={24} color={cardTextColor} />
+                                    <ThemedText style={[styles.itemText, { color: cardTextColor }]}>Score Simulator</ThemedText>
+                                </View>
+                                <IconSymbol name="chevron.right" size={20} color={cardTextColor} />
+                            </TouchableOpacity>
+                        </SafeLink>
+
+                        <SafeLink href="/challenges" asChild>
+                            <TouchableOpacity style={[styles.item, { borderBottomWidth: 0 }]}>
+                                <View style={styles.itemRow}>
+                                    <IconSymbol name="trophy.fill" size={24} color={cardTextColor} />
+                                    <ThemedText style={[styles.itemText, { color: cardTextColor }]}>Crown Challenges</ThemedText>
+                                </View>
+                                <IconSymbol name="chevron.right" size={20} color={cardTextColor} />
+                            </TouchableOpacity>
+                        </SafeLink>
+                    </ThemedView>
+                </View>
+
                 {/* Logout */}
                 <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
                     <IconSymbol name="arrow.right.square" size={20} color="#FF3B30" />

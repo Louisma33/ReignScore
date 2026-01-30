@@ -75,6 +75,14 @@ app.get('/health', async (req, res) => {
     }
 });
 
+import challengeRoutes from './routes/challenges';
+import simulatorRoutes from './routes/simulator';
+import subscriptionRoutes from './routes/subscriptions';
+
+app.use('/subscriptions', subscriptionRoutes);
+app.use('/simulator', simulatorRoutes);
+app.use('/challenges', challengeRoutes);
+
 app.listen(Number(port), '0.0.0.0', () => {
     console.log(`Server running at http://0.0.0.0:${port}`);
 });
