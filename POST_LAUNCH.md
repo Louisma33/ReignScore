@@ -1,0 +1,53 @@
+# ReignScore - Post-Launch Strategy (Phase 9)
+
+## 1. Analytics & Monitoring
+**Goal**: Understand user behavior and catch errors early.
+
+### Status: APPROVED
+*   **Sentry**: For error tracking and crash reporting.
+*   **PostHog**: For event tracking (chosen over Amplitude for privacy/free tier).
+
+## 2. ASO (App Store Optimization)
+**Goal**: Maximize visibility and downloads through targeted keywords and visuals.
+
+### Keywords (Expanded):
+*   "Credit Builder"
+*   "Credit score tracker"
+*   "Credit card optimizer"
+*   "Credit utilization"
+*   "7 day rule credit"
+*   "Dispute credit report"
+*   "Credit repair app"
+*   "Financial wellness"
+*   "Score Simulator"
+*   "Gamified Finance"
+
+### Visual Assets (Screenshots Required):
+Capture high-res screens of these 6 key views:
+1.  **Reign Score Dashboard**: The main view (Dark Mode).
+2.  **Score Simulator**: Showing a score increase simulation.
+3.  **Noble Plan**: The premium upgrade card/screen.
+4.  **Reign Guard**: Dispute management screen (Differentiator).
+5.  **Card Optimizer**: 7-Day Rule payment reminder (Unique Selling Point).
+6.  **Crowns & Rewards**: Gamification elements showing points/status.
+
+*Action*: User to provide text overlays/captions for these screenshots.
+
+## 3. Feature Roadmap & Community
+
+### Real Data Integration (Priority)
+*   **Plaid Production**: This is a core feature, not a roadmap item.
+*   **Action**: Once Plaid approves production access, switch app from Simulation Mode to Live Data immediately.
+
+### Community (Hold)
+*   **Discord/Forum**: Hold launch until 100+ paying Noble/Emperor members to ensure activity.
+
+## 4. Immediate Priorities Checklist
+1.  [ ] **Verify Build**: Install production build on a real physical device.
+2.  [ ] **Capture Screenshots**: Get the 6 specific screens listed above.
+3.  [ ] **Submit to Google Play**: Upload APK to the Internal Testing Track.
+4.  [ ] **Rename Repo**: Rename GitHub repository from `CardReign-Lab` to `ReignScore`.
+5.  [ ] **Upload Assets**: Add App Store/Play Store copy and Privacy Policy (User to provide).
+
+## 5. Deployment Info
+**Current Version**: 1.1.0 (Noble Release)
