@@ -5,7 +5,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Platform, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { api } from '@/services/api';
@@ -213,5 +213,167 @@ export default function PayBillScreen() {
         </ThemedView >
     );
 }
+
+const styles = StyleSheet.create({
+    container: { flex: 1 },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingBottom: 10,
+        zIndex: 10
+    },
+    backButton: {
+        padding: 8,
+        borderRadius: 20,
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    content: {
+        padding: 20,
+        paddingBottom: 100
+    },
+    section: {
+        marginBottom: 24
+    },
+    sectionTitle: {
+        marginBottom: 8,
+        fontSize: 16,
+        fontWeight: '600',
+        opacity: 0.8
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        height: 50
+    },
+    inputIcon: {
+        marginRight: 10
+    },
+    input: {
+        flex: 1,
+        height: '100%',
+        fontSize: 16
+    },
+    amountContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10
+    },
+    currencySymbol: {
+        fontSize: 40,
+        fontWeight: 'bold',
+        opacity: 0.6
+    },
+    amountInput: {
+        fontSize: 48,
+        fontWeight: 'bold',
+        color: '#000',
+        minWidth: 100,
+        textAlign: 'center'
+    },
+    cardList: {
+        flexDirection: 'row',
+    },
+    cardOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        marginRight: 10,
+        minWidth: 160
+    },
+    cardIcon: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 10
+    },
+    cardName: {
+        fontSize: 14,
+        fontWeight: 'bold'
+    },
+    cardLast4: {
+        fontSize: 12,
+        opacity: 0.7
+    },
+    summaryContainer: {
+        borderRadius: 16,
+        padding: 20,
+        marginTop: 10
+    },
+    summaryRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10
+    },
+    summaryLabel: {
+        fontSize: 14,
+        opacity: 0.7
+    },
+    summaryValue: {
+        fontSize: 14,
+        fontWeight: '600'
+    },
+    totalRow: {
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+        paddingTop: 10,
+        marginTop: 5
+    },
+    totalLabel: {
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    totalValue: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#007AFF'
+    },
+    poweredBy: {
+        textAlign: 'center',
+        fontSize: 10,
+        color: '#aaa',
+        marginTop: 15
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 16,
+        borderTopWidth: 1
+    },
+    payButton: {
+        height: 50,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    payButtonDisabled: {
+        opacity: 0.5
+    },
+    payButtonText: {
+        fontSize: 18,
+        fontWeight: 'bold'
+    }
+});
 
 
