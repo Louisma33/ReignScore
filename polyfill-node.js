@@ -1,5 +1,5 @@
 // Polyfill for localStorage in Node 25+ environments for Expo static rendering
-console.log('--- Polyfill Node.js Wrapper Loaded ---');
+// console.log('--- Polyfill Node.js Wrapper Loaded ---');
 
 if (typeof global !== 'undefined') {
     // Check if localStorage exists and is broken (Node 25 experimental storage)
@@ -11,7 +11,7 @@ if (typeof global !== 'undefined') {
     const isLocalStorageMissing = typeof localStorage === 'undefined';
 
     if (isLocalStorageBroken || isLocalStorageMissing) {
-        console.log('--- Polyfilling localStorage ---');
+        // console.log('--- Polyfilling localStorage ---');
 
         const noop = () => { };
         const mockStorage = {
@@ -34,11 +34,11 @@ if (typeof global !== 'undefined') {
             } else {
                 global.localStorage = mockStorage;
             }
-            console.log('--- localStorage Polyfilled Successfully ---');
+            // console.log('--- localStorage Polyfilled Successfully ---');
         } catch (err) {
-            console.warn('--- Failed to Polyfill localStorage ---', err);
+            // console.warn('--- Failed to Polyfill localStorage ---', err);
         }
     } else {
-        console.log('--- localStorage looks fine, skipping polyfill ---');
+        // console.log('--- localStorage looks fine, skipping polyfill ---');
     }
 }
