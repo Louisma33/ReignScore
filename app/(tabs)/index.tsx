@@ -8,7 +8,9 @@ import { Colors } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
+import * as Notifications from 'expo-notifications';
 import { useFocusEffect, useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -59,6 +61,8 @@ export default function HomeScreen() {
     }, [])
   );
 
+
+
   const onRefresh = () => {
     setRefreshing(true);
     fetchCards(true);
@@ -81,6 +85,34 @@ export default function HomeScreen() {
       return (daysInMonth - currentDay) + dueDay;
     }
   };
+
+  // Smart Reminder: Utilization Alert
+  React.useEffect(() => {
+    const checkUtilization = async () => {
+      // Logic requires utilization to be calculated
+      if (!loading && utilization > 30) {
+        try {
+          const lastWarnStr = await SecureStore.getItemAsync('last_util_warning');
+          const lastWarn = lastWarnStr ? parseInt(lastWarnStr) : 0;
+          const now = Date.now();
+          // Warn once every 72 hours
+          if (now - lastWarn > 3600000 * 72) {
+            await Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Credit Alert ⚠️",
+                body: `Your utilization is ${utilization.toFixed(1)}%. Pay it down to <10% to maximize your score growth!`,
+              },
+              trigger: null,
+            });
+            await SecureStore.setItemAsync('last_util_warning', now.toString());
+          }
+        } catch (e) {
+          console.log('Notification Check Failed', e);
+        }
+      }
+    };
+    checkUtilization();
+  }, [utilization, loading]);
 
   return (
     <ThemedView style={styles.container}>
@@ -129,22 +161,30 @@ export default function HomeScreen() {
           <View style={styles.progressBarBg}>
             <View style={[styles.progressBarFill, { width: `${Math.min(utilization, 100)}%` }]} />
             {/* Quick Actions */}
-            <View style={styles.quickActions}>
-              <SafeLink href="/add-card" asChild>
-                <TouchableOpacity style={[styles.actionButton, { backgroundColor: cardColor }]}>
-                  <IconSymbol name="plus.circle.fill" size={24} color={cardTextColor} />
-                  <ThemedText style={[styles.actionText, { color: cardTextColor }]}>Add Card</ThemedText>
-                </TouchableOpacity>
-              </SafeLink>
-              <SafeLink href="/pay" asChild>
-                <TouchableOpacity style={[styles.actionButton, { backgroundColor: cardColor }]}>
-                  <IconSymbol name="arrow.up.right.circle.fill" size={24} color={cardTextColor} />
-                  <ThemedText style={[styles.actionText, { color: cardTextColor }]}>Pay List</ThemedText>
-                </TouchableOpacity>
-              </SafeLink>
-            </View>
+          </View>
+          <View style={styles.quickActions}>
+            <SafeLink href="/add-card" asChild>
+              <TouchableOpacity style={[styles.actionButton, { backgroundColor: cardColor, flex: 1, marginRight: 8 }]}>
+                <IconSymbol name="plus.circle.fill" size={24} color={cardTextColor} />
+                <ThemedText style={[styles.actionText, { color: cardTextColor, fontSize: 14 }]}>Add</ThemedText>
+              </TouchableOpacity>
+            </SafeLink>
+            <SafeLink href="/pay" asChild>
+              <TouchableOpacity style={[styles.actionButton, { backgroundColor: cardColor, flex: 1, marginRight: 8 }]}>
+                <IconSymbol name="arrow.up.right.circle.fill" size={24} color={cardTextColor} />
+                <ThemedText style={[styles.actionText, { color: cardTextColor, fontSize: 14 }]}>Pay</ThemedText>
+              </TouchableOpacity>
+            </SafeLink>
+            <TouchableOpacity
+              onPress={() => router.push('/advisor')}
+              style={[styles.actionButton, { backgroundColor: '#1e293b', flex: 1, borderWidth: 1, borderColor: Colors.common.gold }]}
+            >
+              <IconSymbol name="sparkles" size={24} color={Colors.common.gold} />
+              <ThemedText style={[styles.actionText, { color: Colors.common.gold, fontSize: 14 }]}>Ask AI</ThemedText>
+            </TouchableOpacity>
           </View>
         </View>
+
 
         {/* Card Monitoring List */}
         <View style={styles.sectionHeader}>
@@ -201,7 +241,7 @@ export default function HomeScreen() {
         )}
 
       </ScrollView>
-    </ThemedView>
+    </ThemedView >
   );
 }
 

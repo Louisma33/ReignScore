@@ -236,10 +236,20 @@ export default function SettingsScreen() {
                         </SafeLink>
 
                         <SafeLink href="/challenges" asChild>
-                            <TouchableOpacity style={[styles.item, { borderBottomWidth: 0 }]}>
+                            <TouchableOpacity style={[styles.item, { borderBottomColor: 'rgba(0,0,0,0.1)' }]}>
                                 <View style={styles.itemRow}>
                                     <IconSymbol name="trophy.fill" size={24} color={cardTextColor} />
                                     <ThemedText style={[styles.itemText, { color: cardTextColor }]}>Crown Challenges</ThemedText>
+                                </View>
+                                <IconSymbol name="chevron.right" size={20} color={cardTextColor} />
+                            </TouchableOpacity>
+                        </SafeLink>
+
+                        <SafeLink href="/referrals" asChild>
+                            <TouchableOpacity style={[styles.item, { borderBottomWidth: 0 }]}>
+                                <View style={styles.itemRow}>
+                                    <IconSymbol name="gift.fill" size={24} color={cardTextColor} />
+                                    <ThemedText style={[styles.itemText, { color: cardTextColor }]}>Refer a Friend</ThemedText>
                                 </View>
                                 <IconSymbol name="chevron.right" size={20} color={cardTextColor} />
                             </TouchableOpacity>

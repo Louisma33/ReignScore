@@ -30,6 +30,14 @@ const MAPPING = {
   'shield.checkerboard': 'security',
   'building.columns.fill': 'account-balance',
   'square.and.arrow.up': 'share',
+  'sparkles': 'auto-awesome',
+  'plus.circle.fill': 'add-circle',
+  'arrow.up.right.circle.fill': 'arrow-circle-up',
+  'crown.fill': 'workspace-premium',
+  'trophy.fill': 'emoji-events',
+  'chart.bar.xaxis': 'bar-chart',
+  'creditcard.fill': 'credit-card',
+  'person.circle.fill': 'account-circle',
 } as IconMapping;
 
 /**

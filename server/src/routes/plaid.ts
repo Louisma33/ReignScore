@@ -19,6 +19,10 @@ router.post('/create_link_token', authenticateToken, async (req: AuthRequest, re
             country_codes: [CountryCode.Us],
             language: 'en',
             // redirect_uri: 'https://reignscore.com/oauth', // Only required for OAuth (Production)
+            ...(process.env.PLAID_ENV !== 'sandbox' && {
+                redirect_uri: 'https://reignscore.com/oauth'
+            }),
+            android_package_name: 'com.williaml33.ReignScore',
         };
 
         const createTokenResponse = await plaidClient.linkTokenCreate(request);
