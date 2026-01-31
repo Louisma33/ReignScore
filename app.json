@@ -64,7 +64,7 @@
         "expo-build-properties",
         {
           "ios": {
-            "deploymentTarget": "15.1"
+            "deploymentTarget": "16.0"
           },
           "android": {
             "compileSdkVersion": 35,
@@ -78,8 +78,7 @@
         {
           "faceIDPermission": "Allow ReignScore to use Face ID for secure access."
         }
-      ],
-      "./plugins/withPlaid"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
