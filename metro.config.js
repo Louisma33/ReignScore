@@ -5,7 +5,7 @@ const config = getDefaultConfig(__dirname);
 
 config.resolver.extraNodeModules = {
     ...config.resolver.extraNodeModules,
-    'tslib': path.resolve(__dirname, 'node_modules/tslib/tslib.es6.js'),
+    'tslib': path.resolve(__dirname, 'node_modules/tslib/tslib.js'),
 };
 
 module.exports = config;
