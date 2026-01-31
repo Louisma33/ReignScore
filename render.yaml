@@ -22,3 +22,11 @@ databases:
     region: oregon
     databaseName: reignscore
     user: reignscore_user
+
+  - type: static
+    name: reignscore-web
+    runtime: static
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    plan: free
+    region: oregon

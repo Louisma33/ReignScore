@@ -11,7 +11,8 @@
     "lint": "expo lint",
     "test": "jest",
     "test:web": "jest --config jest.config.js",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build": "expo export -p web"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "expo lint --fix"
