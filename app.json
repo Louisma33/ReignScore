@@ -11,9 +11,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.williaml33.ReignScore",
-      "associatedDomains": [
-        "applinks:cardreign.com"
-      ],
       "jsEngine": "hermes",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
