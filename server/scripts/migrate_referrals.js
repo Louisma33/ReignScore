@@ -1,32 +1,42 @@
-const { Client } = require('pg');
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+const { Pool } = require('pg');
 
-const client = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL || 'postgresql://cardreign:cardreign@localhost:5432/cardreign'
 });
 
-async function runMigration() {
+async function migrateReferrals() {
+    console.log('Migrating Referrals Schema...');
+    const client = await pool.connect();
     try {
-        await client.connect();
-        console.log('Connected to database...');
+        await client.query('BEGIN');
 
-        const sqlPath = path.join(__dirname, '..', 'src', 'db', 'schema_referrals.sql');
-        const sql = fs.readFileSync(sqlPath, 'utf8');
+        console.log('Adding referral columns to users...');
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20) UNIQUE;`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_id INTEGER REFERENCES users(id) ON DELETE SET NULL;`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS credit_score INTEGER DEFAULT 0;`);
 
-        console.log('Running migration...');
-        await client.query(sql);
-        console.log('Migration successful!');
-    } catch (err) {
-        console.error('Migration failed:', err);
+        console.log('Creating referrals table...');
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS referrals (
+                id SERIAL PRIMARY KEY,
+                referrer_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                referred_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                status VARCHAR(50) DEFAULT 'pending', -- pending, completed, rewarded
+                reward_points INTEGER DEFAULT 500,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(referred_user_id) -- A user can only be referred once
+            );
+        `);
+
+        await client.query('COMMIT');
+        console.log('Referral Migration Successful!');
+    } catch (e) {
+        await client.query('ROLLBACK');
+        console.error('Migration Failed:', e);
     } finally {
-        await client.end();
+        client.release();
+        pool.end();
     }
 }
 
-runMigration();
+migrateReferrals();

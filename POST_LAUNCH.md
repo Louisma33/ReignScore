@@ -3,9 +3,9 @@
 ## 1. Analytics & Monitoring
 **Goal**: Understand user behavior and catch errors early.
 
-### Status: APPROVED
-*   **Sentry**: For error tracking and crash reporting.
-*   **PostHog**: For event tracking (chosen over Amplitude for privacy/free tier).
+### Status: IMPLEMENTED
+*   **Sentry**: Installed and Configured (`@sentry/react-native`). *Action: Update DSN in `app/_layout.tsx`.*
+*   **PostHog**: Integrated (`posthog-react-native`).
 
 ## 2. ASO (App Store Optimization)
 **Goal**: Maximize visibility and downloads through targeted keywords and visuals.

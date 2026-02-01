@@ -66,7 +66,7 @@
           "android": {
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
-            "minSdkVersion": 26,
+            "minSdkVersion": 26
           }
         }
       ],
@@ -75,7 +75,8 @@
         {
           "faceIDPermission": "Allow ReignScore to use Face ID for secure access."
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,

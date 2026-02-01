@@ -10,6 +10,12 @@ import { ThemeProvider as CustomThemeProvider, ThemeContext, useTheme } from '..
 import '../polyfill';
 
 import { Analytics } from '@/services/analytics';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0', // Placeholder DSN - User to replace
+  debug: false
+});
 
 // ... other imports
 
@@ -126,7 +132,7 @@ function ProtectedLayout() {
   );
 }
 
-export default function RootLayout() {
+const RootLayout = () => {
   return (
     <CustomThemeProvider>
       <AuthProvider>
@@ -135,3 +141,5 @@ export default function RootLayout() {
     </CustomThemeProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);
