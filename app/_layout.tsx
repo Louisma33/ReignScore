@@ -9,9 +9,13 @@ import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ThemeProvider as CustomThemeProvider, ThemeContext, useTheme } from '../context/ThemeContext';
 import '../polyfill';
 
+import { Analytics } from '@/services/analytics';
+
+// ... other imports
+
 // Protected Layout Component
 function ProtectedLayout() {
-  const { token, isLoading } = useAuth();
+  const { token, isLoading, user } = useAuth(); // Added user
   const segments = useSegments();
   const router = useRouter();
   const { theme } = useTheme(); // Use theme from context
@@ -24,7 +28,14 @@ function ProtectedLayout() {
 
   useEffect(() => {
     console.log('App: ProtectedLayout mounted');
+    Analytics.init(); // Initialize PostHog
   }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      Analytics.identify(user.id, { email: user.email, name: user.name });
+    }
+  }, [user]);
 
   useEffect(() => {
     checkOnboarding();

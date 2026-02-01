@@ -46,3 +46,8 @@ ReignScore has been upgraded with **Monetization (Phase 5)** and **Differentiati
 - [x] System health check passed (Expo Doctor).
 
 **Ready for Production Deployment.**
+
+## 📥 Production Build Artifacts (v1.1.0)
+- **Android (.aab)**: [Download Link](https://expo.dev/artifacts/eas/2qG3Ncne51sfSdeX6N4nBe.aab) - *Ready for Google Play*
+- **iOS (.ipa)**: [Download Link](https://expo.dev/artifacts/eas/k4YjHj2GsSnK2Xh7LHBUNr.ipa) - *Ready for TestFlight*
+

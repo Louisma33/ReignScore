@@ -19,7 +19,7 @@ const ACTIONS = [
     { label: 'Pay Down Debt', value: 'pay_off_debt', hasAmount: true },
     { label: 'Increase Credit Limit', value: 'increase_limit', hasAmount: false },
     { label: 'Open New Card', value: 'new_card', hasAmount: false },
-    // { label: 'Miss Payment', value: 'miss_payment', hasAmount: false }, // Hidden for now to focus on positive
+    { label: 'Miss Payment', value: 'miss_payment', hasAmount: false },
 ];
 
 export default function SimulatorScreen() {

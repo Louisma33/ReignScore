@@ -16,7 +16,7 @@ services:
           name: reignscore-db
           property: connectionString
       - key: STRIPE_SECRET_KEY
-        value: mk_1SviUuKp2Fwwk4U0ohChhfrh
+        value: mk_1SviRQKp2Fwwk4U0uGIZMCjO
 
 databases:
   - name: reignscore-db

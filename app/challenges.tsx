@@ -49,12 +49,18 @@ export default function ChallengesScreen() {
     );
 
     const handleJoin = async (id: number) => {
-        // Implement join logic here - currently just a visual placeholder
-        // In real app, call api.post(`/challenges/${id}/join`)
-        // and then reload list
-        console.log('Join challenge', id);
-        // Optimistic update for demo
-        setChallenges(prev => prev.map(c => c.id === id ? { ...c, status: 'in_progress', progress: 0 } : c));
+        try {
+            // Optimistic update
+            setChallenges(prev => prev.map(c => c.id === id ? { ...c, status: 'in_progress', progress: 0 } : c));
+
+            await api.joinChallenge(id);
+            // Reload to ensure consistency
+            await loadChallenges();
+        } catch (error) {
+            console.error('Failed to join challenge', error);
+            // Revert on failure
+            loadChallenges();
+        }
     };
 
     const renderItem = ({ item }: { item: Challenge }) => {

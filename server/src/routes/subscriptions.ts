@@ -96,18 +96,20 @@ router.post('/create-checkout-session', authenticateToken, async (req: AuthReque
 
 // Webhook to handle fulfillment (basic implementation)
 // Note: This needs raw body parsing in index.ts if using real webhooks
-router.post('/webhook', async (req, res) => {
+router.post('/webhook', async (req: any, res) => {
     const sig = req.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     let event: Stripe.Event;
 
     try {
-        // If getting raw body is complex in this setup, we assume req.body is already parsed 
-        // OR we use a separate middleware. For this MVP, let's assume valid event
-        // In prod, MUST verify signature: event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-        event = req.body;
+        if (endpointSecret && sig && req.rawBody) {
+            event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+        } else {
+            event = req.body;
+        }
     } catch (err: any) {
+        console.error(`Webhook Error: ${err.message}`);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 

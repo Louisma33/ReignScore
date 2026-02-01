@@ -140,6 +140,9 @@ export const api = {
     // Challenges
     getChallenges: async (token?: string) => {
         return api.get('/challenges', token);
+    },
+    joinChallenge: async (id: number, token?: string) => {
+        return api.post(`/challenges/${id}/join`, {}, token);
     }
 };
 

@@ -26,7 +26,13 @@ import rateLimit from 'express-rate-limit'; // Security: Rate limiting
 app.use(helmet());
 app.use(compression()); // Apply compression
 app.use(cors());
-app.use(express.json());
+
+// JSON Parsing with Raw Body capture for Webhooks
+app.use(express.json({
+    verify: (req: any, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
 
 // Global Rate Limiter: 150 requests per 15 minutes
 const limiter = rateLimit({
