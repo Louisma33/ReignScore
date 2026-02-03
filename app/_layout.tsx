@@ -1,7 +1,9 @@
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import * as Sentry from '@sentry/react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { PostHogProvider } from 'posthog-react-native';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
@@ -10,15 +12,12 @@ import { ThemeProvider as CustomThemeProvider, ThemeContext, useTheme } from '..
 import '../polyfill';
 
 import { Analytics } from '@/services/analytics';
-import * as Sentry from '@sentry/react-native';
 
+// Initialize Sentry
 Sentry.init({
-  dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0', // Placeholder DSN - User to replace
-  debug: false
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN || 'https://placeholder@sentry.io/123456',
+  debug: __DEV__, // Only debug in development
 });
-
-// ... other imports
-
 // Protected Layout Component
 function ProtectedLayout() {
   const { token, isLoading, user } = useAuth(); // Added user
@@ -134,11 +133,13 @@ function ProtectedLayout() {
 
 const RootLayout = () => {
   return (
-    <CustomThemeProvider>
-      <AuthProvider>
-        <ProtectedLayout />
-      </AuthProvider>
-    </CustomThemeProvider>
+    <PostHogProvider apiKey={process.env.EXPO_PUBLIC_POSTHOG_API_KEY || 'phc_PLACEHOLDER'} options={{ host: 'https://us.i.posthog.com' }}>
+      <CustomThemeProvider>
+        <AuthProvider>
+          <ProtectedLayout />
+        </AuthProvider>
+      </CustomThemeProvider>
+    </PostHogProvider>
   );
 }
 
