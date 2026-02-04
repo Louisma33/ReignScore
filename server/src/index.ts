@@ -93,6 +93,10 @@ app.use('/challenges', challengeRoutes);
 app.use('/advisor', advisorRoutes);
 app.use('/referrals', referralRoutes);
 
-app.listen(Number(port), '0.0.0.0', () => {
+const server = app.listen(Number(port), '0.0.0.0', () => {
     console.log(`Server running at http://0.0.0.0:${port}`);
 });
+
+// Increase timeouts for Render load balancer compatibility
+server.keepAliveTimeout = 120000;
+server.headersTimeout = 120000;
