@@ -8,6 +8,7 @@ import { Colors } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Notifications from 'expo-notifications';
 import { useFocusEffect, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
@@ -140,7 +141,12 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.common.gold} />}
       >
         {/* Balance & Utilization Card */}
-        <View style={[styles.balanceCard, { backgroundColor: Colors.common.gold }]}>
+        <LinearGradient
+          colors={['#FFD700', '#FDB931']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.balanceCard}
+        >
           <View>
             <ThemedText style={styles.balanceLabel}>Total Balance</ThemedText>
             <ThemedText style={styles.balanceAmount}>${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</ThemedText>
@@ -183,7 +189,7 @@ export default function HomeScreen() {
               <ThemedText style={[styles.actionText, { color: Colors.common.gold, fontSize: 14 }]}>Ask AI</ThemedText>
             </TouchableOpacity>
           </View>
-        </View>
+        </LinearGradient>
 
 
         {/* Card Monitoring List */}

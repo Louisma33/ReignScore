@@ -19,6 +19,11 @@ export const Colors = {
     lightGray: '#E2E8F0',
     placeholder: '#999999',
     gold: '#FFD700',
+    gradients: {
+      gold: ['#FFD700', '#FDB931'], // Gold to Amber
+      darkGold: ['#FFD700', '#B8860B'], // Deep Gold
+      premium: ['#1e293b', '#0f172a'], // Slate gradient
+    },
   },
   light: {
     text: '#333333',       // Dark Gray
@@ -37,18 +42,18 @@ export const Colors = {
   },
   dark: {
     text: '#ECEDEE',
-    background: '#151718',
-    card: '#FFD700',       // Gold (Card Background)
-    action: '#000000',
-    input: '#252525',
-    border: '#333333',
-    tint: '#FFD700',       // Gold tint? Or keep Blue? Let's try Gold for consistency
-    icon: '#4A4A4A',       // Darker icons for Gold backgrounds if used there?
-    tabIconDefault: '#9BA1A6',
+    background: '#0f172a', // Rich Slate Background
+    card: '#1e293b',       // Dark Slate Card (vs Blinding Gold)
+    action: '#FFFFFF',
+    input: '#1e293b',
+    border: '#334155',
+    tint: '#FFD700',       // Gold Tint
+    icon: '#94a3b8',
+    tabIconDefault: '#64748b',
     tabIconSelected: '#FFD700', // Gold
     success: '#00A859',
-    error: '#D03027',      // Red
-    cardText: '#1A1A1A',   // Text on cards (Dark on Gold)
+    error: '#EF4444',      // Brighter Red
+    cardText: '#FFFFFF',   // White text on dark cards
   },
 };
 
