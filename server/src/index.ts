@@ -83,6 +83,7 @@ app.get('/health', async (req, res) => {
 
 import advisorRoutes from './routes/advisor';
 import challengeRoutes from './routes/challenges';
+import creditRoutes from './routes/credit';
 import referralRoutes from './routes/referrals';
 import simulatorRoutes from './routes/simulator';
 import subscriptionRoutes from './routes/subscriptions';
@@ -92,6 +93,7 @@ app.use('/simulator', simulatorRoutes);
 app.use('/challenges', challengeRoutes);
 app.use('/advisor', advisorRoutes);
 app.use('/referrals', referralRoutes);
+app.use('/credit', creditRoutes);
 
 const server = app.listen(Number(port), '0.0.0.0', () => {
     console.log(`Server running at http://0.0.0.0:${port}`);
