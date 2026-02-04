@@ -18,17 +18,18 @@ services:
       - key: STRIPE_SECRET_KEY
         value: mk_1SviRQKp2Fwwk4U0uGIZMCjO
 
+  - type: static
+    name: reignscore-web
+    runtime: static
+    rootDir: website
+    buildCommand: npm install && npm run build
+    publishDir: out
+    plan: free
+    region: oregon
+
 databases:
   - name: reignscore-db
     plan: free
     region: oregon
     databaseName: reignscore
     user: reignscore_user
-
-  - type: static
-    name: reignscore-web
-    runtime: static
-    buildCommand: npm install && npm run build
-    publishDir: dist
-    plan: free
-    region: oregon
