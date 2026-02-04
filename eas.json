@@ -37,7 +37,8 @@
                 "APP_ENV": "production",
                 "EXPO_PUBLIC_API_URL": "https://reignscores.onrender.com",
                 "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51SviRPKp2Fwwk4U0tJolXcUbiWlEHdKVinnl4nBpAyWOaNB15MvnJatHMTfObxRoDzq7c6xx4iocYTIp540gujgi00OKJ6RvAW",
-                "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+                "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+                "SENTRY_DISABLE_AUTO_UPLOAD": "true"
             },
             "android": {
                 "buildType": "app-bundle"
