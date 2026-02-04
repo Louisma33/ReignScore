@@ -68,7 +68,7 @@ app.use('/transactions', transactionsRoutes);
 app.use('/plaid', plaidRoutes);
 
 app.get('/', (req, res) => {
-    res.json({ message: 'ReignScore API is running' });
+    res.json({ message: 'ReignScore API v5 is running and healthy!' });
 });
 
 app.get('/health', async (req, res) => {
