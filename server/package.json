@@ -1,8 +1,11 @@
 {
     "name": "reignscore-server",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Backend API for ReignScore",
     "main": "dist/index.js",
+    "engines": {
+        "node": ">=20.0.0"
+    },
     "scripts": {
         "start": "node dist/index.js",
         "dev": "nodemon src/index.ts",
