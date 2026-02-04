@@ -3,7 +3,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
@@ -80,7 +80,13 @@ export default function LoginScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>ReignScore</Text>
+            <View style={styles.logoContainer}>
+                <Image
+                    source={require('../../assets/images/reignscore-logo.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                />
+            </View>
             <Text style={styles.subtitle}>Welcome Back</Text>
 
             <View style={styles.inputContainer}>
@@ -141,12 +147,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
     },
-    title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: Colors.common.gold,
-        textAlign: 'center',
-        marginBottom: 10,
+    logoContainer: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    logo: {
+        width: 200,
+        height: 60,
     },
     subtitle: {
         fontSize: 18,
