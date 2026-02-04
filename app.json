@@ -82,7 +82,8 @@
           "organization": "reignscore-lab",
           "project": "reignscore-mobile"
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,
