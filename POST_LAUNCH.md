@@ -44,7 +44,7 @@ Capture high-res screens of these 6 key views:
 
 ## 4. Immediate Priorities Checklist
 1.  [ ] **Verify Build**: Install production build on a real physical device.
-2.  [ ] **Capture Screenshots**: Get the 6 specific screens listed above.
+2.  [x] **Capture Screenshots**: Get the 6 specific screens listed above.
 3.  [ ] **Submit to Google Play**: Upload APK to the Internal Testing Track.
 4.  [ ] **Rename Repo**: Rename GitHub repository from `CardReign-Lab` to `ReignScore`.
 5.  [ ] **Upload Assets**: Add App Store/Play Store copy and Privacy Policy (User to provide).
