@@ -2,7 +2,7 @@
 import * as SecureStore from 'expo-secure-store';
 
 // Use local IP for Physical Device testing
-export const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://reignscores.onrender.com';
+export const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://reignscore-api-final-v4-4l9j.onrender.com';
 
 const getToken = async () => {
     try {
