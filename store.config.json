@@ -1,0 +1,60 @@
+{
+  "configVersion": 0,
+  "apple": {
+    "version": "1.1.0",
+    "release": {
+      "automaticRelease": true
+    },
+    "copyright": "2026 William Louisma",
+    "info": {
+      "en-US": {
+        "title": "ReignScore",
+        "subtitle": "Dominance in Every Point",
+        "description": "ReignScore - The Ultimate Credit Score & Rewards Optimization App\n\nTake control of your financial kingdom with ReignScore, the most intelligent credit management app designed for those who demand more from their money.\n\nSMART CREDIT MONITORING\n- Real-time credit score tracking with detailed breakdowns\n- Understand exactly what affects your score\n- Get personalized recommendations to improve your credit health\n- Track score changes over time with beautiful visualizations\n\nCARD REWARDS OPTIMIZATION\n- Add all your credit cards in one place\n- Get AI-powered suggestions on which card to use for every purchase\n- Maximize cashback, points, and miles on every transaction\n- Never miss a reward opportunity again\n\nINTELLIGENT INSIGHTS\n- Reign Advisor: Your personal AI financial assistant\n- Spending analysis with category breakdowns\n- Budget tracking with smart alerts\n- Transaction history with merchant recognition\n\nREIGN GUARD PROTECTION\n- Identity monitoring and fraud alerts\n- Dark web scanning for your information\n- Real-time security notifications\n- Peace of mind for your financial data\n\nBILL PAY & MANAGEMENT\n- Pay bills directly with your credit cards\n- Earn rewards on payments that don't normally accept cards\n- Schedule recurring payments\n- Never miss a due date\n\nSECURE VAULTS\n- Safely store sensitive financial documents\n- Encrypted storage for cards and accounts\n- Quick access when you need it\n- Bank-level security\n\nPREMIUM FEATURES\n- Ad-free experience\n- Advanced analytics and reports\n- Priority customer support\n- Exclusive Reign Advisor sessions\n\nWHY REIGNSCORE?\nUnlike basic credit monitoring apps, ReignScore combines credit tracking, rewards optimization, and AI-powered insights into one powerful platform. We don't just show you your score - we help you build your financial empire.\n\nSECURITY FIRST\nYour data is protected with 256-bit encryption and we never sell your information. Bank-level security meets modern convenience.\n\nGET STARTED FREE\nDownload ReignScore today and join thousands of users who are maximizing their credit potential. Your reign begins now!\n\nQuestions? Contact us at support@reignscore.com\nVisit us at https://reignscore.com",
+        "keywords": [
+          "credit score",
+          "rewards",
+          "cashback",
+          "credit cards",
+          "money",
+          "finance",
+          "budget",
+          "tracking",
+          "AI",
+          "credit monitoring"
+        ],
+        "promoText": "Master your credit game! Track cards, maximize rewards, and build your financial empire with AI-powered insights.",
+        "releaseNotes": "New Reign Advisor: Your AI-powered financial assistant. Enhanced credit score tracking with detailed breakdowns. Improved card rewards optimization. Bug fixes and performance improvements. Updated design with smoother animations.",
+        "supportUrl": "https://reignscore.com/support",
+        "marketingUrl": "https://reignscore.com",
+        "privacyPolicyUrl": "https://reignscore.com/privacy",
+        "privacyPolicyText": "",
+        "privacyChoicesUrl": ""
+      }
+    },
+    "categories": [
+      "FINANCE",
+      "LIFESTYLE"
+    ],
+    "advisory": {
+      "ageRatingOverride": "NONE",
+      "alcoholTobaccoOrDrugUseOrReferences": "NONE",
+      "contests": "NONE",
+      "gambling": false,
+      "gamblingSimulated": "NONE",
+      "horrorOrFearThemes": "NONE",
+      "kidsAgeBand": null,
+      "koreaAgeRatingOverride": "NONE",
+      "lootBox": false,
+      "matureOrSuggestiveThemes": "NONE",
+      "medicalOrTreatmentInformation": "NONE",
+      "profanityOrCrudeHumor": "NONE",
+      "sexualContentGraphicAndNudity": "NONE",
+      "sexualContentOrNudity": "NONE",
+      "unrestrictedWebAccess": false,
+      "violenceCartoonOrFantasy": "NONE",
+      "violenceRealistic": "NONE",
+      "violenceRealisticProlongedGraphicOrSadistic": "NONE"
+    }
+  }
+}
