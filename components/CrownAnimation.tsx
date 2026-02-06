@@ -1,7 +1,6 @@
 import * as Haptics from 'expo-haptics';
-import { MotiView } from 'moti';
-import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
 import { ThemedText } from './themed-text';
 
 type CrownAnimationProps = {
@@ -10,13 +9,29 @@ type CrownAnimationProps = {
 };
 
 export function CrownAnimation({ trigger, onComplete }: CrownAnimationProps) {
+    const opacity = useRef(new Animated.Value(0)).current;
+    const scale = useRef(new Animated.Value(0.5)).current;
+    const translateY = useRef(new Animated.Value(0)).current;
+    const glowOpacity = useRef(new Animated.Value(0)).current;
+    const glowScale = useRef(new Animated.Value(0)).current;
+
     useEffect(() => {
         if (trigger) {
             triggerHaptics();
+            runAnimation();
+        } else {
+            // Reset values
+            opacity.setValue(0);
+            scale.setValue(0.5);
+            translateY.setValue(0);
+            glowOpacity.setValue(0);
+            glowScale.setValue(0);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [trigger]);
 
     const triggerHaptics = async () => {
+        if (Platform.OS === 'web') return;
         try {
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             // Optional second impact for "regal weight" after a delay to sync with scale up
@@ -24,39 +39,68 @@ export function CrownAnimation({ trigger, onComplete }: CrownAnimationProps) {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             }, 200);
         } catch {
-            // Ignore haptics errors (e.g. web)
+            // Ignore haptics errors
         }
+    };
+
+    const runAnimation = () => {
+        // Crown animation
+        Animated.parallel([
+            Animated.spring(opacity, {
+                toValue: 1,
+                useNativeDriver: true,
+            }),
+            Animated.spring(scale, {
+                toValue: 2.5,
+                damping: 8,
+                stiffness: 100,
+                useNativeDriver: true,
+            }),
+            Animated.spring(translateY, {
+                toValue: -50,
+                useNativeDriver: true,
+            }),
+            // Glow animation
+            Animated.timing(glowOpacity, {
+                toValue: 0.6,
+                duration: 800,
+                useNativeDriver: true,
+            }),
+            Animated.timing(glowScale, {
+                toValue: 4,
+                duration: 800,
+                useNativeDriver: true,
+            }),
+        ]).start(() => {
+            onComplete?.();
+        });
     };
 
     if (!trigger) return null;
 
     return (
         <View style={styles.container} pointerEvents="none">
-            <MotiView
-                from={{ opacity: 0, scale: 0.5, translateY: 0 }}
-                animate={{ opacity: 1, scale: 2.5, translateY: -50 }}
-                transition={{
-                    type: 'spring',
-                    damping: 8,
-                    stiffness: 100,
-                }}
-                onDidAnimate={(scale) => {
-                    // Moti callback might behave differently on props, but using timeout for safety if needed or just letting parent handle cleanup via timer
-                }}
-                style={styles.crownContainer}
+            <Animated.View
+                style={[
+                    styles.crownContainer,
+                    {
+                        opacity,
+                        transform: [{ scale }, { translateY }],
+                    },
+                ]}
             >
                 <ThemedText style={{ fontSize: 80 }}>👑</ThemedText>
-            </MotiView>
+            </Animated.View>
 
             {/* Glow Effect */}
-            <MotiView
-                from={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 0.6, scale: 4 }}
-                transition={{
-                    type: 'timing',
-                    duration: 800,
-                }}
-                style={styles.glow}
+            <Animated.View
+                style={[
+                    styles.glow,
+                    {
+                        opacity: glowOpacity,
+                        transform: [{ scale: glowScale }],
+                    },
+                ]}
             />
         </View>
     );
