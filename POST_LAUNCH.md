@@ -59,8 +59,14 @@ Capture high-res screens of these 6 key views:
 | Backend API | ✅ Healthy | https://reignscore-api-final-v4-4l9j.onrender.com |
 | Website | ✅ Live | https://reignscore.com |
 | iOS App | ✅ Submitted to App Store Connect | Build 23 |
-| Android App | ⏸️ Pending Service Account | Version code 44 |
+| Android App | ⏳ **Waiting for Google Play Developer Verification** | Version code 44 |
 | GitHub Repo | ✅ Renamed | https://github.com/Louisma33/ReignScore |
+
+### Google Play Status
+- 📄 **Identity Documents**: Uploaded, awaiting Google review (2-7 days)
+- 📱 **Android Device Verification**: Required after identity approved
+- 📞 **Phone Verification**: Required after identity approved
+- 📦 **Android AAB Ready**: Downloaded at `C:\Users\1040g\Downloads\*.aab`
 
 ### Build Artifacts
 - **iOS .ipa**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
