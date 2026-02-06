@@ -1,6 +1,7 @@
 import * as Haptics from 'expo-haptics';
-import { useEffect, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { MotiView } from 'moti';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { ThemedText } from './themed-text';
 
 type CrownAnimationProps = {
@@ -9,38 +10,16 @@ type CrownAnimationProps = {
 };
 
 export function CrownAnimation({ trigger, onComplete }: CrownAnimationProps) {
-    const [animation] = useState(new Animated.Value(0));
-    const [glowAnimation] = useState(new Animated.Value(0));
-
     useEffect(() => {
         if (trigger) {
             triggerHaptics();
-            // Run animations
-            Animated.parallel([
-                Animated.spring(animation, {
-                    toValue: 1,
-                    damping: 8,
-                    stiffness: 100,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(glowAnimation, {
-                    toValue: 1,
-                    duration: 800,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                onComplete?.();
-            });
-        } else {
-            animation.setValue(0);
-            glowAnimation.setValue(0);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [trigger]);
 
     const triggerHaptics = async () => {
         try {
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            // Optional second impact for "regal weight" after a delay to sync with scale up
             setTimeout(async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             }, 200);
@@ -51,52 +30,33 @@ export function CrownAnimation({ trigger, onComplete }: CrownAnimationProps) {
 
     if (!trigger) return null;
 
-    const crownScale = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0.5, 2.5],
-    });
-
-    const crownTranslateY = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, -50],
-    });
-
-    const glowScale = glowAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 4],
-    });
-
-    const glowOpacity = glowAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 0.6],
-    });
-
     return (
         <View style={styles.container} pointerEvents="none">
-            <Animated.View
-                style={[
-                    styles.crownContainer,
-                    {
-                        opacity: animation,
-                        transform: [
-                            { scale: crownScale },
-                            { translateY: crownTranslateY },
-                        ],
-                    },
-                ]}
+            <MotiView
+                from={{ opacity: 0, scale: 0.5, translateY: 0 }}
+                animate={{ opacity: 1, scale: 2.5, translateY: -50 }}
+                transition={{
+                    type: 'spring',
+                    damping: 8,
+                    stiffness: 100,
+                }}
+                onDidAnimate={(scale) => {
+                    // Moti callback might behave differently on props, but using timeout for safety if needed or just letting parent handle cleanup via timer
+                }}
+                style={styles.crownContainer}
             >
                 <ThemedText style={{ fontSize: 80 }}>👑</ThemedText>
-            </Animated.View>
+            </MotiView>
 
             {/* Glow Effect */}
-            <Animated.View
-                style={[
-                    styles.glow,
-                    {
-                        opacity: glowOpacity,
-                        transform: [{ scale: glowScale }],
-                    },
-                ]}
+            <MotiView
+                from={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.6, scale: 4 }}
+                transition={{
+                    type: 'timing',
+                    duration: 800,
+                }}
+                style={styles.glow}
             />
         </View>
     );
@@ -107,7 +67,7 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 9999,
+        zIndex: 9999, // Ensure it's on top
     },
     crownContainer: {
         zIndex: 2,

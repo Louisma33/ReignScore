@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "reignscore",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.williaml33.ReignScore",
@@ -39,7 +39,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-icon.jpg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -65,9 +65,7 @@
           "android": {
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
-            "minSdkVersion": 26,
-            "newArchEnabled": false,
-            "kotlinVersion": "1.9.24"
+            "minSdkVersion": 26
           }
         }
       ],
