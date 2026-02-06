@@ -52,3 +52,21 @@ Capture high-res screens of these 6 key views:
 
 ## 5. Deployment Info
 **Current Version**: 1.1.0 (Noble Release)
+
+### Service Status (Last checked: 2026-02-06)
+| Service | Status | URL |
+|---------|--------|-----|
+| Backend API | ✅ Healthy | https://reignscore-api-final-v4-4l9j.onrender.com |
+| Website | ✅ Live | https://reignscore.com |
+| iOS App | ✅ Submitted to App Store Connect | Build 23 |
+| Android App | ⏸️ Pending Service Account | Version code 44 |
+| GitHub Repo | ✅ Renamed | https://github.com/Louisma33/ReignScore |
+
+### Build Artifacts
+- **iOS .ipa**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
+- **Android .aab**: https://expo.dev/artifacts/eas/gSKGBKVZJkguJi2Wqj8nbf.aab
+
+### Health Checks
+- ✅ Expo Doctor: 17/17 passed
+- ✅ Database: Connected
+- ✅ API: Responding
