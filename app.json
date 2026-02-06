@@ -66,7 +66,8 @@
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
             "minSdkVersion": 26,
-            "newArchEnabled": false
+            "newArchEnabled": false,
+            "kotlinVersion": "1.9.24"
           }
         }
       ],
