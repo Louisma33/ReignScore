@@ -45,9 +45,10 @@ Capture high-res screens of these 6 key views:
 ## 4. Immediate Priorities Checklist
 1.  [ ] **Verify Build**: Install production build on a real physical device.
 2.  [x] **Capture Screenshots**: Get the 6 specific screens listed above.
-3.  [ ] **Submit to Google Play**: Upload APK to the Internal Testing Track.
-4.  [ ] **Rename Repo**: Rename GitHub repository from `CardReign-Lab` to `ReignScore`.
-5.  [ ] **Upload Assets**: Add App Store/Play Store copy and Privacy Policy (User to provide).
+3.  [ ] **Submit to Google Play**: Upload AAB to the Internal Testing Track. *(Requires Google Service Account JSON key)*
+4.  [x] **Rename Repo**: Renamed GitHub repository to `ReignScore`. ✅ (2026-02-06)
+5.  [x] **Submit to iOS App Store**: Build v1.1.0 (Build 23) already submitted to App Store Connect. ✅
+6.  [x] **Database Migrations**: All migrations applied to production. ✅
 
 ## 5. Deployment Info
 **Current Version**: 1.1.0 (Noble Release)
