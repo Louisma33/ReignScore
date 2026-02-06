@@ -50,3 +50,6 @@ test_output*.txt
 
 # coverage
 coverage/
+
+# Google Service Account (sensitive credentials)
+google-service-account.json
