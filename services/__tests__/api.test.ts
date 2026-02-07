@@ -171,6 +171,44 @@ describe('API Service', () => {
             expect(url).toContain('/cards');
         });
 
+        it('processPayment should call post with /payments endpoint', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve(JSON.stringify({ success: true })),
+            });
+
+            await api.processPayment(1, 100);
+
+            const [url, options] = mockFetch.mock.calls[0];
+            expect(url).toContain('/payments');
+            expect(options.method).toBe('POST');
+            expect(JSON.parse(options.body)).toEqual({ cardId: 1, amount: 100 });
+        });
+
+        it('getSubscriptionStatus should call get with /subscriptions/status', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve(JSON.stringify({ plan: 'premium', active: true })),
+            });
+
+            await api.getSubscriptionStatus();
+
+            const [url, options] = mockFetch.mock.calls[0];
+            expect(url).toContain('/subscriptions/status');
+            expect(options.method).toBe('GET');
+        });
+
+        it('createCheckoutSession should call post with /subscriptions/create-checkout-session', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve(JSON.stringify({ url: 'https://checkout.stripe.com/test' })),
+            });
+
+            await api.createCheckoutSession('premium');
+
+            const [url, options] = mockFetch.mock.calls[0];
+            expect(url).toContain('/subscriptions/create-checkout-session');
+            expect(options.method).toBe('POST');
+            expect(JSON.parse(options.body)).toEqual({ plan: 'premium' });
+        });
+
         // Note: simulateScore triggers complex async behavior with the global fetch timeout
         // This is tested via integration tests instead
         it('simulateScore should exist as a function', () => {
@@ -202,4 +240,86 @@ describe('API Service', () => {
             expect(options.method).toBe('POST');
         });
     });
+
+    describe('api.getRaw', () => {
+        it('should make GET request and return raw text', async () => {
+            const rawText = 'Raw response text';
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve(rawText),
+            });
+
+            const result = await api.getRaw('/raw-endpoint');
+
+            expect(mockFetch).toHaveBeenCalled();
+            const [url, options] = mockFetch.mock.calls[0];
+            expect(url).toContain('/raw-endpoint');
+            expect(options.method).toBe('GET');
+            expect(result).toBe(rawText);
+        });
+
+        it('should include authorization header when token is provided', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve('data'),
+            });
+
+            await api.getRaw('/protected-raw', 'my-token');
+
+            const [, options] = mockFetch.mock.calls[0];
+            expect(options.headers['Authorization']).toBe('Bearer my-token');
+        });
+
+        it('should not have Content-Type header', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve('data'),
+            });
+
+            await api.getRaw('/endpoint');
+
+            const [, options] = mockFetch.mock.calls[0];
+            expect(options.headers['Content-Type']).toBeUndefined();
+        });
+    });
+
+    describe('Token Handling', () => {
+        it('should fallback to stored token when none provided', async () => {
+            // Set up localStorage to return a token
+            (global.localStorage.getItem as jest.Mock).mockReturnValueOnce('stored-token');
+
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve(JSON.stringify({ success: true })),
+            });
+
+            await api.get('/endpoint');
+
+            const [, options] = mockFetch.mock.calls[0];
+            // Should have Authorization header from localStorage mock
+            expect(options.headers['Authorization']).toBe('Bearer stored-token');
+        });
+
+        it('should use custom token over stored token', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve(JSON.stringify({ success: true })),
+            });
+
+            await api.get('/endpoint', 'custom-token');
+
+            const [, options] = mockFetch.mock.calls[0];
+            expect(options.headers['Authorization']).toBe('Bearer custom-token');
+        });
+
+        it('should not include Authorization header when no token available', async () => {
+            // Reset localStorage mock to return null
+            (global.localStorage.getItem as jest.Mock).mockReturnValueOnce(null);
+
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve(JSON.stringify({ success: true })),
+            });
+
+            await api.get('/endpoint');
+
+            const [, options] = mockFetch.mock.calls[0];
+            expect(options.headers['Authorization']).toBeUndefined();
+        });
+    });
 });
+
