@@ -76,4 +76,4 @@ Capture high-res screens of these 6 key views:
 - ✅ Expo Doctor: 17/17 passed
 - ✅ Database: Connected
 - ✅ API: Responding
-- ✅ Test Suite: 173 tests passing (71% coverage)
+- ✅ Test Suite: 237 tests passing (74.5% coverage)
