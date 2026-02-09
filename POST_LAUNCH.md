@@ -53,20 +53,22 @@ Capture high-res screens of these 6 key views:
 ## 5. Deployment Info
 **Current Version**: 1.1.0 (Noble Release)
 
-### Service Status (Last checked: 2026-02-06)
+### Service Status (Last checked: 2026-02-09)
 | Service | Status | URL |
 |---------|--------|-----|
 | Backend API | ✅ Healthy | https://reignscore-api-final-v4-4l9j.onrender.com |
 | Website | ✅ Live | https://reignscore.com |
-| iOS App | ✅ Submitted to App Store Connect | Build 23 |
-| Android App | ⏳ **Waiting for Google Play Developer Verification** | Version code 44 |
+| iOS App | ✅ Submitted to App Store Connect | Build 23, v1.1.0 |
+| Android App | 🔄 **Google Verification - Pending Android Device** | Version code 44 |
 | GitHub Repo | ✅ Renamed | https://github.com/Louisma33/ReignScore |
 
-### Google Play Status
-- 📄 **Identity Documents**: Uploaded, awaiting Google review (2-7 days)
-- 📱 **Android Device Verification**: Required after identity approved
-- 📞 **Phone Verification**: Required after identity approved
-- 📦 **Android AAB Ready**: Downloaded at `C:\Users\1040g\Downloads\*.aab`
+### Google Play Status (Updated 2026-02-09)
+- ✅ **Account Created**: Account ID 6988321389953436304
+- ✅ **Identity Documents**: Approved by Google
+- 🔄 **Android Device Verification**: In progress (using BlueStacks emulator)
+- 📞 **Phone Verification**: Pending (requires device verification first)
+- 📦 **Android AAB Ready**: `C:\Users\1040g\Downloads\ReignScore-v1.1.0-build44.aab`
+- 🖼️ **Play Store Graphics Ready**: Screenshots and feature graphic in Downloads folder
 
 ### Build Artifacts
 - **iOS .ipa**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
@@ -76,4 +78,4 @@ Capture high-res screens of these 6 key views:
 - ✅ Expo Doctor: 17/17 passed
 - ✅ Database: Connected
 - ✅ API: Responding
-- ✅ Test Suite: 364 tests passing (91% coverage)
+- ✅ Test Suite: 370 tests passing (91% coverage)
