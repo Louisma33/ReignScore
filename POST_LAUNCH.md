@@ -47,26 +47,38 @@ Capture high-res screens of these 6 key views:
 2.  [x] **Capture Screenshots**: Get the 6 specific screens listed above.
 3.  [ ] **Submit to Google Play**: Upload AAB to the Internal Testing Track. *(Requires Google Service Account JSON key)*
 4.  [x] **Rename Repo**: Renamed GitHub repository to `ReignScore`. ✅ (2026-02-06)
-5.  [x] **Submit to iOS App Store**: Build v1.1.0 (Build 23) already submitted to App Store Connect. ✅
+5.  [x] **Submit to iOS App Store**: ✅ Submitted for Apple Review via Fastlane (2026-02-11)
 6.  [x] **Database Migrations**: All migrations applied to production. ✅
 
 ## 5. Deployment Info
 **Current Version**: 1.1.0 (Noble Release)
 
-### Service Status (Last checked: 2026-02-09)
+### Service Status (Last checked: 2026-02-11)
 | Service | Status | URL |
 |---------|--------|-----|
 | Backend API | ✅ Healthy | https://reignscore-api-final-v4-4l9j.onrender.com |
 | Website | ✅ Live | https://reignscore.com |
-| iOS App | ✅ Submitted to App Store Connect | Build 23, v1.1.0 |
-| Android App | 🔄 **Google Verification - Pending Android Device** | Version code 44 |
+| iOS App | ✅ **Submitted for Apple Review** (awaiting approval) | Build 23, v1.1.0 |
+| Android App | 🔄 **Google Play - Store Listing Setup Needed** | Version code 44 |
 | GitHub Repo | ✅ Renamed | https://github.com/Louisma33/ReignScore |
 
-### Google Play Status (Updated 2026-02-09)
+### iOS App Store Status (Updated 2026-02-11)
+- ✅ **Build Uploaded**: Build 23 (v1.1.0)
+- ✅ **Screenshots**: 3 iPhone + 1 iPad uploaded
+- ✅ **Metadata**: Description, keywords, categories set
+- ✅ **Content Rights**: Declared (no third-party content)
+- ✅ **Age Rating**: 4+ (all regions)
+- ✅ **App Privacy**: Published
+- ✅ **Submitted for Review**: Via Fastlane (2026-02-11 12:25 EST)
+- ⏳ **Apple Review**: Typically 24-48 hours
+- 🔄 **Auto-Release**: Enabled (goes live immediately upon approval)
+
+### Google Play Status (Updated 2026-02-11)
 - ✅ **Account Created**: Account ID 6988321389953436304
 - ✅ **Identity Documents**: Approved by Google
-- 🔄 **Android Device Verification**: In progress (using BlueStacks emulator)
-- 📞 **Phone Verification**: Pending (requires device verification first)
+- ✅ **App Created in Play Console**: ReignScore
+- 🔄 **Store Listing**: Needs completion (descriptions, screenshots)
+- 🔄 **Internal Testing**: Needs AAB upload
 - 📦 **Android AAB Ready**: `C:\Users\1040g\Downloads\ReignScore-v1.1.0-build44.aab`
 - 🖼️ **Play Store Graphics Ready**: Screenshots and feature graphic in Downloads folder
 
@@ -74,10 +86,11 @@ Capture high-res screens of these 6 key views:
 - **iOS .ipa**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
 - **Android .aab**: https://expo.dev/artifacts/eas/gSKGBKVZJkguJi2Wqj8nbf.aab
 
-### Health Checks (Updated 2026-02-09)
+### Health Checks (Updated 2026-02-11)
 - ✅ Expo Doctor: 17/17 passed
 - ✅ Database: Connected
 - ✅ API: Responding
 - ✅ Test Suite: 388 tests passing (91% coverage)
 - ✅ ESLint: No errors
+- ✅ Fastlane: Installed and configured
 
