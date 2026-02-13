@@ -36,8 +36,9 @@ Capture high-res screens of these 6 key views:
 ## 3. Feature Roadmap & Community
 
 ### Real Data Integration (Priority)
-*   **Plaid Production**: This is a core feature, not a roadmap item.
-*   **Action**: Once Plaid approves production access, switch app from Simulation Mode to Live Data immediately.
+*   **Plaid Sandbox**: ✅ Credentials configured and verified (2026-02-12)
+*   **Plaid Production**: Upgrade to production once Plaid approves access.
+*   **Action**: Switch `PLAID_ENV` from `sandbox` to `production` and update keys when approved.
 
 ### Community (Hold)
 *   **Discord/Forum**: Hold launch until 100+ paying Noble/Emperor members to ensure activity.
@@ -45,21 +46,23 @@ Capture high-res screens of these 6 key views:
 ## 4. Immediate Priorities Checklist
 1.  [ ] **Verify Build**: Install production build on a real physical device.
 2.  [x] **Capture Screenshots**: Get the 6 specific screens listed above.
-3.  [ ] **Submit to Google Play**: Upload AAB to the Internal Testing Track. *(Requires Google Service Account JSON key)*
+3.  [x] **Submit to Google Play**: AAB, screenshots, and store listing uploaded. ✅ (2026-02-12)
 4.  [x] **Rename Repo**: Renamed GitHub repository to `ReignScore`. ✅ (2026-02-06)
 5.  [x] **Submit to iOS App Store**: ✅ Submitted for Apple Review via Fastlane (2026-02-11)
-6.  [x] **Database Migrations**: All migrations applied to production. ✅
+6.  [x] **Database Migrations**: All migrations auto-applied on startup. ✅
+7.  [x] **Plaid Integration**: Sandbox credentials configured & full flow tested. ✅ (2026-02-12)
 
 ## 5. Deployment Info
 **Current Version**: 1.1.0 (Noble Release)
 
-### Service Status (Last checked: 2026-02-11)
+### Service Status (Last checked: 2026-02-12)
 | Service | Status | URL |
 |---------|--------|-----|
-| Backend API | ✅ Healthy | https://reignscore-api-final-v4-4l9j.onrender.com |
-| Website | ✅ Live | https://reignscore.com |
+| Backend API | ✅ Healthy (DB connected) | https://reignscore-api-final-v4-4l9j.onrender.com |
+| Website | ✅ Live (200 OK) | https://reignscore.com |
+| Plaid API | ✅ **Sandbox Connected** (real tokens) | Sandbox mode |
 | iOS App | ✅ **Submitted for Apple Review** (awaiting approval) | Build 23, v1.1.0 |
-| Android App | 🔄 **Google Play - Store Listing Setup Needed** | Version code 44 |
+| Android App | ✅ **Google Play Store Listing Complete** | Version code 44 |
 | GitHub Repo | ✅ Renamed | https://github.com/Louisma33/ReignScore |
 
 ### iOS App Store Status (Updated 2026-02-11)
@@ -73,24 +76,32 @@ Capture high-res screens of these 6 key views:
 - ⏳ **Apple Review**: Typically 24-48 hours
 - 🔄 **Auto-Release**: Enabled (goes live immediately upon approval)
 
-### Google Play Status (Updated 2026-02-11)
+### Google Play Status (Updated 2026-02-12)
 - ✅ **Account Created**: Account ID 6988321389953436304
 - ✅ **Identity Documents**: Approved by Google
 - ✅ **App Created in Play Console**: ReignScore
-- 🔄 **Store Listing**: Needs completion (descriptions, screenshots)
-- 🔄 **Internal Testing**: Needs AAB upload
+- ✅ **Store Listing**: Complete (descriptions, screenshots, feature graphic uploaded)
+- 🔄 **Internal Testing**: Needs AAB upload to testing track
 - 📦 **Android AAB Ready**: `C:\Users\1040g\Downloads\ReignScore-v1.1.0-build44.aab`
-- 🖼️ **Play Store Graphics Ready**: Screenshots and feature graphic in Downloads folder
+
+### Plaid Integration Status (Updated 2026-02-12)
+- ✅ **Credentials**: Configured (Sandbox)
+- ✅ **Link Token Creation**: Real Plaid tokens generated
+- ✅ **Token Exchange**: Public → Access token flow working
+- ✅ **Transaction Sync**: 18 transactions pulled from sandbox bank
+- ✅ **DB Storage**: plaid_items table with linked accounts
+- ✅ **Auto-Migration**: Schema applied on server startup
+- 🔒 **Sandbox Test Creds**: username `user_good` / password `pass_good`
 
 ### Build Artifacts
 - **iOS .ipa**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
 - **Android .aab**: https://expo.dev/artifacts/eas/gSKGBKVZJkguJi2Wqj8nbf.aab
 
-### Health Checks (Updated 2026-02-11)
+### Health Checks (Updated 2026-02-12)
 - ✅ Expo Doctor: 17/17 passed
-- ✅ Database: Connected
-- ✅ API: Responding
-- ✅ Test Suite: 388 tests passing (91% coverage)
+- ✅ Database: Connected (12 tables, auto-migrated)
+- ✅ API: Responding (healthy)
+- ✅ Website: Live (200 OK)
+- ✅ Plaid: Sandbox fully operational (5/5 flow steps passing)
 - ✅ ESLint: No errors
-- ✅ Fastlane: Installed and configured
-
+- ✅ Git: Clean (up to date with origin/master)
