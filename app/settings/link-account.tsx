@@ -5,60 +5,72 @@ import { api } from '@/services/api';
 import { create, LinkExit, LinkSuccess, open } from '@/utils/plaid-sdk';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function LinkAccountScreen() {
     const router = useRouter();
     const [status, setStatus] = useState<'initial' | 'loading' | 'success'>('initial');
-    const [linkToken, setLinkToken] = useState<string | null>(null);
+    const linkTokenRef = useRef<string | null>(null);
 
     useEffect(() => {
         // Pre-fetch link token when screen loads
         fetchLinkToken();
     }, []);
 
-    const fetchLinkToken = async () => {
+    const fetchLinkToken = async (): Promise<string | null> => {
         try {
+            console.log('[Plaid] Fetching link token...');
             const response = await api.post('/plaid/create_link_token', {});
-            setLinkToken(response.link_token);
+            console.log('[Plaid] Link token received:', response.link_token ? 'YES' : 'NO');
+            const token = response.link_token;
+            linkTokenRef.current = token;
+            return token;
         } catch (e) {
-            console.error('Failed to fetch link token', e);
+            console.error('[Plaid] Failed to fetch link token', e);
             Alert.alert('Error', 'Could not initialize Plaid. Please try again later.');
+            return null;
         }
     };
 
     const handleLink = async () => {
-        if (!linkToken) {
-            await fetchLinkToken(); // Retry if missing
-            if (!linkToken) return;
+        // Use ref to avoid React state race condition
+        let token = linkTokenRef.current;
+        if (!token) {
+            token = await fetchLinkToken();
+            if (!token) {
+                Alert.alert('Error', 'Unable to get Plaid link token. Please check your connection and try again.');
+                return;
+            }
         }
 
+        console.log('[Plaid] Starting link flow with token:', token.substring(0, 30) + '...');
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
         setStatus('loading');
         try {
-            await create({ token: linkToken });
+            console.log('[Plaid] Calling create()...');
+            await create({ token });
+            console.log('[Plaid] create() done, calling open()...');
             await open({
                 onSuccess: async (success: LinkSuccess) => {
-                    console.log('Plaid Link Success:', success);
+                    console.log('[Plaid] Link Success:', success);
                     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                     await exchangePublicToken(success.publicToken, success.metadata);
                 },
                 onExit: (exit: LinkExit) => {
-                    console.log('Plaid Link Exit:', exit);
+                    console.log('[Plaid] Link Exit:', exit);
                     setStatus('initial');
                     if (exit.error) {
                         Alert.alert('Error', exit.error.displayMessage || 'Plaid Link exited abruptly or encountered an error.');
                     }
                 },
             });
-        } catch (e) {
-            console.error('Plaid SDK Error', e);
-            // Fallback for Expo Go or environments without native SDK
+        } catch (e: any) {
+            console.error('[Plaid] SDK Error:', e?.message || e);
             Alert.alert(
-                'Native SDK Error',
-                'Plaid Native SDK is not available. Please ensure you are running a Development Build, not standard Expo Go.'
+                'Plaid Link Error',
+                `Could not open bank connection: ${e?.message || 'Unknown error'}. Make sure you are using a Development Build (not Expo Go).`
             );
             setStatus('initial');
         }
