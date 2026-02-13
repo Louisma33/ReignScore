@@ -87,7 +87,8 @@
           "organization": "reignscore-lab",
           "project": "reignscore-mobile"
         }
-      ]
+      ],
+      "react-native-plaid-link-sdk"
     ],
     "experiments": {
       "typedRoutes": true,

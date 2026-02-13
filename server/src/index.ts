@@ -69,7 +69,6 @@ app.use('/plastiq', plastiqRoutes);
 app.use('/goals', goalRoutes);
 app.use('/budgets', budgetRoutes);
 app.use('/transactions', transactionsRoutes);
-app.use('/plaid', plaidRoutes);
 
 app.get('/', (req, res) => {
     console.log('Root endpoint hit');
