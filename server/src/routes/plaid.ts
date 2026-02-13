@@ -8,7 +8,6 @@ import { ReignGuardService } from '../services/reignGuardService';
 const router = Router();
 
 // 1. Create Link Token
-// 1. Create Link Token
 router.post('/create_link_token', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id.toString();
@@ -19,24 +18,37 @@ router.post('/create_link_token', authenticateToken, async (req: AuthRequest, re
             return res.json({ link_token: 'link-sandbox-mock-token-' + Date.now() });
         }
 
-        const request = {
+        console.log(`[Plaid] Creating link token for user ${userId}, env: ${process.env.PLAID_ENV}`);
+
+        const request: any = {
             user: { client_user_id: userId || 'unknown' },
             client_name: 'ReignScore',
             products: [Products.Transactions],
             country_codes: [CountryCode.Us],
             language: 'en',
-            ...(process.env.PLAID_ENV !== 'sandbox' && {
-                redirect_uri: 'https://reignscore.com/oauth'
-            }),
-            android_package_name: 'com.williaml33.ReignScore',
         };
 
+        // Only add redirect_uri for non-sandbox
+        if (process.env.PLAID_ENV !== 'sandbox') {
+            request.redirect_uri = 'https://reignscore.com/oauth';
+        }
+
+        // Only add android_package_name for production (sandbox can reject it)
+        if (process.env.PLAID_ENV === 'production') {
+            request.android_package_name = 'com.williaml33.ReignScore';
+        }
+
         const createTokenResponse = await plaidClient.linkTokenCreate(request);
+        console.log(`[Plaid] Link token created successfully`);
         res.json({ link_token: createTokenResponse.data.link_token });
-    } catch (error) {
-        console.error('Error creating link token:', error);
-        // Fallback to mock on error for robustness during demo
-        res.json({ link_token: 'link-sandbox-mock-error-fallback' });
+    } catch (error: any) {
+        const plaidError = error?.response?.data || error?.message || 'Unknown error';
+        console.error('Error creating link token:', JSON.stringify(plaidError));
+        // Return the actual error in dev/sandbox for debugging
+        res.status(500).json({
+            link_token: null,
+            error: process.env.PLAID_ENV === 'sandbox' ? plaidError : 'Link token creation failed'
+        });
     }
 });
 
