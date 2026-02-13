@@ -1,6 +1,7 @@
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useAuth } from '@/context/AuthContext';
 import { api } from '@/services/api';
 import { create, LinkExit, LinkSuccess, open } from '@/utils/plaid-sdk';
 import * as Haptics from 'expo-haptics';
@@ -10,18 +11,21 @@ import { ActivityIndicator, Alert, Image, StyleSheet, TouchableOpacity, View } f
 
 export default function LinkAccountScreen() {
     const router = useRouter();
+    const { token: authToken } = useAuth();
     const [status, setStatus] = useState<'initial' | 'loading' | 'success'>('initial');
     const linkTokenRef = useRef<string | null>(null);
 
     useEffect(() => {
-        // Pre-fetch link token when screen loads
-        fetchLinkToken();
-    }, []);
+        if (authToken) {
+            fetchLinkToken();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authToken]);
 
     const fetchLinkToken = async (): Promise<string | null> => {
         try {
-            console.log('[Plaid] Fetching link token...');
-            const response = await api.post('/plaid/create_link_token', {});
+            console.log('[Plaid] Fetching link token... authToken:', authToken ? 'YES' : 'NO');
+            const response = await api.post('/plaid/create_link_token', {}, authToken || undefined);
             console.log('[Plaid] Link token received:', response.link_token ? 'YES' : 'NO');
             const token = response.link_token;
             linkTokenRef.current = token;
@@ -34,7 +38,11 @@ export default function LinkAccountScreen() {
     };
 
     const handleLink = async () => {
-        // Use ref to avoid React state race condition
+        if (!authToken) {
+            Alert.alert('Not Logged In', 'Please log in before connecting a bank account.');
+            return;
+        }
+
         let token = linkTokenRef.current;
         if (!token) {
             token = await fetchLinkToken();
@@ -81,7 +89,7 @@ export default function LinkAccountScreen() {
             await api.post('/plaid/set_access_token', {
                 public_token: publicToken,
                 metadata: metadata
-            });
+            }, authToken || undefined);
 
             setStatus('success');
             Alert.alert('Success', 'Bank account linked successfully!', [

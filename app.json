@@ -28,7 +28,13 @@
       "package": "com.williaml33.ReignScore",
       "jsEngine": "hermes",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
     "web": {
       "output": "static",
@@ -92,6 +98,12 @@
       "eas": {
         "projectId": "093a55ba-7e71-4b52-a70c-8505e84b8abc"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/093a55ba-7e71-4b52-a70c-8505e84b8abc"
     }
   }
 }
