@@ -2,6 +2,8 @@ import compression from 'compression'; // Performance: Gzip compression
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import { query } from './db';
 
 console.log('Starting ReignScore Server...'); // Startup log for debugging
@@ -102,10 +104,49 @@ app.use('/advisor', advisorRoutes);
 app.use('/referrals', referralRoutes);
 app.use('/credit', creditRoutes);
 
-const server = app.listen(Number(port), '0.0.0.0', () => {
-    console.log(`Server running at http://0.0.0.0:${port}`);
+// Auto-migrate database on startup
+const runAutoMigrations = async () => {
+    try {
+        const schemaPath = path.join(__dirname, 'db', 'schema.sql');
+        if (fs.existsSync(schemaPath)) {
+            const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+            await query(schemaSql);
+            console.log('[Migration] Database schema applied successfully.');
+        } else {
+            console.warn('[Migration] schema.sql not found at', schemaPath);
+        }
+    } catch (error) {
+        console.error('[Migration] Error applying schema:', error);
+    }
+};
+
+// Debug endpoint to check DB tables (remove in production later)
+app.get('/debug/tables', async (req, res) => {
+    try {
+        const tables = await query(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name"
+        );
+        const userCols = await query(
+            "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' ORDER BY ordinal_position"
+        );
+        const userCount = await query('SELECT COUNT(*) FROM users').catch(() => ({ rows: [{ count: 'table not found' }] }));
+        res.json({
+            tables: tables.rows.map((r: any) => r.table_name),
+            users_columns: userCols.rows,
+            users_count: userCount.rows[0].count
+        });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// Increase timeouts for Render load balancer compatibility
-server.keepAliveTimeout = 120000;
-server.headersTimeout = 120000;
+// Run migrations then start server
+runAutoMigrations().then(() => {
+    const server = app.listen(Number(port), '0.0.0.0', () => {
+        console.log(`Server running at http://0.0.0.0:${port}`);
+    });
+
+    // Increase timeouts for Render load balancer compatibility
+    server.keepAliveTimeout = 120000;
+    server.headersTimeout = 120000;
+});
