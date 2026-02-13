@@ -94,10 +94,20 @@ Capture high-res screens of these 6 key views:
 - 🔒 **Sandbox Test Creds**: username `user_good` / password `pass_good`
 
 ### Build Artifacts
-- **iOS .ipa**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
+- **iOS .ipa (Store)**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
+- **iOS .ipa (Preview/Testing)**: https://expo.dev/artifacts/eas/7kipmQY1Bn5h1eiAvMksRx.ipa
 - **Android .aab**: https://expo.dev/artifacts/eas/gSKGBKVZJkguJi2Wqj8nbf.aab
 
-### Health Checks (Updated 2026-02-12)
+### Latest iOS Preview Build (for device testing)
+- **Build ID**: 3348b03b-edc3-45fc-857b-fc88ffa014c9
+- **Install URL**: https://expo.dev/accounts/williaml33/projects/CardReign/builds/3348b03b-edc3-45fc-857b-fc88ffa014c9
+- **Date**: 2026-02-13
+- **Bug Fix**: Auth token now passed explicitly to Plaid API calls (was returning 401)
+- **How to install**: Open the Install URL in Safari on iPhone → Sign in as williaml33 → Tap Install
+- **Test credentials**: email `plaidflow@reignscore.com` / password `TestPlaid2026!`
+- **Plaid sandbox creds**: username `user_good` / password `pass_good`
+
+### Health Checks (Updated 2026-02-13)
 - ✅ Expo Doctor: 17/17 passed
 - ✅ Database: Connected (12 tables, auto-migrated)
 - ✅ API: Responding (healthy)
@@ -105,3 +115,4 @@ Capture high-res screens of these 6 key views:
 - ✅ Plaid: Sandbox fully operational (5/5 flow steps passing)
 - ✅ ESLint: No errors
 - ✅ Git: Clean (up to date with origin/master)
+- ✅ iOS Preview Build: Finished (auth fix deployed)
