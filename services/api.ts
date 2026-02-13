@@ -63,6 +63,7 @@ export const api = {
         };
         const authToken = token || await getToken();
         if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+        console.log(`[API POST] ${endpoint} | Auth: ${authToken ? 'YES' : 'NO'} | URL: ${API_URL}`);
 
         const response = await fetch(`${API_URL}${endpoint}`, {
             method: 'POST',
@@ -70,6 +71,10 @@ export const api = {
             body: JSON.stringify(body),
         });
         const text = await response.text();
+        console.log(`[API POST] ${endpoint} | Status: ${response.status} | Body: ${text.substring(0, 100)}`);
+        if (!response.ok) {
+            throw new Error(`API Error ${response.status}: ${text.substring(0, 100)}`);
+        }
         try {
             return JSON.parse(text);
         } catch (e) {
@@ -146,13 +151,13 @@ export const api = {
     }
 };
 
-// Add response timeout
+// Add response timeout (45s for Render free tier cold starts)
 const originalFetch = global.fetch;
 global.fetch = (input, init) => {
     return Promise.race([
         originalFetch(input, init),
         new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Request timed out')), 15000)
+            setTimeout(() => reject(new Error('Request timed out')), 45000)
         ) as Promise<Response>
     ]);
 };

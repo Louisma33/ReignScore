@@ -26,9 +26,9 @@ export default function LinkAccountScreen() {
             const token = response.link_token;
             linkTokenRef.current = token;
             return token;
-        } catch (e) {
+        } catch (e: any) {
             console.error('[Plaid] Failed to fetch link token', e);
-            Alert.alert('Error', 'Could not initialize Plaid. Please try again later.');
+            Alert.alert('Plaid Error', `${e?.message || 'Unknown error'}`);
             return null;
         }
     };
