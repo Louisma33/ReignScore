@@ -1,7 +1,7 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Submit app for review"
+  desc "Submit app for review with demo credentials"
   lane :submit_for_review do
     deliver(
       app_identifier: "com.williaml33.ReignScore",
@@ -9,8 +9,56 @@ platform :ios do
       automatic_release: true,
       skip_binary_upload: true,
       skip_screenshots: true,
-      skip_metadata: true,
+      skip_metadata: false,
       force: true,
+      app_review_information: {
+        demo_user: "demo@reignscore.com",
+        demo_password: "ReignScore2026!",
+        notes: "To sign in, use the Email field (not phone number). Demo credentials: Email: demo@reignscore.com | Password: ReignScore2026! — After sign in, you can explore all features including credit score tracking, card management, and the Reign Advisor AI assistant."
+      },
+      submission_information: {
+        add_id_info_uses_idfa: false,
+        export_compliance_uses_encryption: false,
+        export_compliance_is_exempt: true,
+        export_compliance_contains_proprietary_cryptography: false,
+        export_compliance_contains_third_party_cryptography: false,
+        content_rights_contains_third_party_content: false,
+        content_rights_has_rights: true
+      }
+    )
+  end
+
+  desc "Update review info only then resubmit"
+  lane :resubmit do
+    # First reject current submission
+    deliver(
+      app_identifier: "com.williaml33.ReignScore",
+      reject_if_possible: true,
+      submit_for_review: false,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: true,
+      force: true
+    )
+
+    # Wait a moment
+    UI.message("Waiting for rejection to process...")
+    sleep(5)
+
+    # Now update review info and resubmit
+    deliver(
+      app_identifier: "com.williaml33.ReignScore",
+      submit_for_review: true,
+      automatic_release: true,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: false,
+      force: true,
+      app_review_information: {
+        demo_user: "demo@reignscore.com",
+        demo_password: "ReignScore2026!",
+        notes: "To sign in, use the Email field (not phone number). Demo credentials: Email: demo@reignscore.com | Password: ReignScore2026! — After sign in, you can explore all features including credit score tracking, card management, and the Reign Advisor AI assistant."
+      },
       submission_information: {
         add_id_info_uses_idfa: false,
         export_compliance_uses_encryption: false,

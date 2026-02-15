@@ -44,10 +44,14 @@
 ## Status
 - [x] App name: ReignScore
 - [x] Short description: ✅ Done (78/80 chars)
-- [x] Full description: ✅ Done (fix the "R")
-- [ ] App icon: Upload needed
-- [ ] Feature graphic: Upload needed
-- [ ] Phone screenshots: Upload needed (4 files)
-- [ ] 7-inch tablet: Upload needed (2 files)
-- [ ] 10-inch tablet: Upload needed (2 files)
-- [ ] AAB upload to Internal testing
+- [x] Full description: ✅ Done (updated via API 2026-02-15)
+- [x] App icon: ✅ Uploaded (512x512) via API 2026-02-15
+- [x] Feature graphic: ✅ Uploaded (1024x500) via API 2026-02-15
+- [x] Phone screenshots: ✅ Uploaded (4 files) via API 2026-02-15
+- [x] 7-inch tablet: ✅ Uploaded (2 files) via API 2026-02-15
+- [x] 10-inch tablet: ✅ Uploaded (2 files) via API 2026-02-15
+- [x] AAB upload to Internal testing: ✅ Version 44 (draft) via API 2026-02-15
+- [ ] Content Rating questionnaire: Needs completion in Play Console
+- [ ] Data Safety form: Needs completion in Play Console
+- [ ] App Access (demo credentials): Needs completion in Play Console
+- [ ] Promote release from draft → rollout

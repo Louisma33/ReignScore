@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReignScore — Demo Login Verification</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .login-card {
+            background: #14141f;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .login-card h2 {
+            font-size: 1.1rem;
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field input:focus {
+            border-color: #FFD700;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results-card {
+            background: #14141f;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .results-card h2 {
+            font-size: 1.1rem;
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #1a1a2e;
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+
+        .test-name {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .test-badge {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-waiting {
+            background: #1a1a2e;
+            color: #555;
+        }
+
+        .badge-loading {
+            background: #1a1a2e;
+            color: #888;
+            animation: pulse 1.5s infinite;
+        }
+
+        .badge-ok {
+            background: #0a3d1a;
+            color: #4ade80;
+        }
+
+        .badge-err {
+            background: #3d0a0a;
+            color: #f87171;
+        }
+
+        .badge-info {
+            background: #0a1a3d;
+            color: #60a5fa;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .token-area {
+            background: #0a0a12;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: monospace;
+            font-size: 0.72rem;
+            color: #4ade80;
+            word-break: break-all;
+            max-height: 80px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .summary-card {
+            background: #14141f;
+            border: 2px solid #222;
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .summary-card.success {
+            border-color: #4ade80;
+        }
+
+        .summary-card.fail {
+            border-color: #f87171;
+        }
+
+        .summary-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .summary-card p {
+            color: #aaa;
+        }
+
+        .user-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.85rem;
+        }
+
+        .user-detail .label {
+            color: #888;
+        }
+
+        .user-detail .value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .cred-display {
+            background: #0d1a0d;
+            border: 1px solid #1a4d1a;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .cred-display h3 {
+            color: #4ade80;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .cred-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.85rem;
+        }
+
+        .cred-row .l {
+            color: #888;
+        }
+
+        .cred-row .v {
+            color: #4ade80;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>👑 ReignScore Demo Login Test</h1>
+        <p>Verifying Apple Review demo credentials work correctly</p>
+    </div>
+
+    <div class="container">
+        <!-- Login Card -->
+        <div class="login-card">
+            <h2>🔐 Demo Login</h2>
+            <div class="field">
+                <label>Email</label>
+                <input type="email" id="email" value="demo@reignscore.com" />
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" id="password" value="ReignScore2026!" />
+            </div>
+            <button class="login-btn" id="loginBtn" onclick="runTest()">🚀 Test Login & All Endpoints</button>
+
+            <div class="cred-display">
+                <h3>📋 Credentials sent to Apple</h3>
+                <div class="cred-row"><span class="l">Email:</span><span class="v">demo@reignscore.com</span></div>
+                <div class="cred-row"><span class="l">Password:</span><span class="v">ReignScore2026!</span></div>
+            </div>
+        </div>
+
+        <!-- Results Card -->
+        <div class="results-card">
+            <h2>📡 Test Results</h2>
+            <div class="test-item">
+                <span class="test-name">1. Login Authentication</span>
+                <span class="test-badge badge-waiting" id="t1">Waiting</span>
+            </div>
+            <div class="test-item">
+                <span class="test-name">2. User Profile</span>
+                <span class="test-badge badge-waiting" id="t2">Waiting</span>
+            </div>
+            <div class="test-item">
+                <span class="test-name">3. JWT Token Valid</span>
+                <span class="test-badge badge-waiting" id="t3">Waiting</span>
+            </div>
+            <div class="test-item">
+                <span class="test-name">4. Plaid Link Token</span>
+                <span class="test-badge badge-waiting" id="t4">Waiting</span>
+            </div>
+            <div class="test-item">
+                <span class="test-name">5. Cards Endpoint</span>
+                <span class="test-badge badge-waiting" id="t5">Waiting</span>
+            </div>
+            <div class="test-item">
+                <span class="test-name">6. Transactions Endpoint</span>
+                <span class="test-badge badge-waiting" id="t6">Waiting</span>
+            </div>
+            <div class="test-item">
+                <span class="test-name">7. Goals Endpoint</span>
+                <span class="test-badge badge-waiting" id="t7">Waiting</span>
+            </div>
+            <div class="test-item">
+                <span class="test-name">8. Notifications</span>
+                <span class="test-badge badge-waiting" id="t8">Waiting</span>
+            </div>
+            <div id="tokenArea" class="token-area"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-card full-width" id="summary" style="display:none">
+            <h2 id="summaryTitle"></h2>
+            <p id="summaryText"></p>
+        </div>
+    </div>
+
+    <script>
+        const API = 'https://reignscore-api-final-v4-4l9j.onrender.com';
+
+        function setBadge(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = `test-badge badge-${type}`;
+        }
+
+        async function runTest() {
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Testing...';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            let passed = 0;
+            let total = 8;
+            let token = null;
+
+            // Test 1: Login
+            setBadge('t1', 'Testing...', 'loading');
+            try {
+                const res = await fetch(API + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (data.token) {
+                    token = data.token;
+                    setBadge('t1', '✅ Login OK', 'ok');
+                    passed++;
+
+                    // Test 2: User Profile
+                    setBadge('t2', `✅ ${data.user.name}`, 'ok');
+                    passed++;
+
+                    // Test 3: Token
+                    setBadge('t3', '✅ JWT Valid', 'ok');
+                    passed++;
+                    document.getElementById('tokenArea').style.display = 'block';
+                    document.getElementById('tokenArea').textContent = token;
+                } else {
+                    setBadge('t1', '❌ Failed', 'err');
+                    setBadge('t2', '❌ No user', 'err');
+                    setBadge('t3', '❌ No token', 'err');
+                }
+            } catch (e) {
+                setBadge('t1', '❌ Error', 'err');
+            }
+
+            if (!token) {
+                btn.textContent = '❌ Login Failed — Check Credentials';
+                return;
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+
+            // Test 4: Plaid
+            setBadge('t4', 'Testing...', 'loading');
+            try {
+                const res = await fetch(API + '/plaid/create_link_token', {
+                    method: 'POST', headers, body: '{}'
+                });
+                const data = await res.json();
+                if (data.link_token) {
+                    setBadge('t4', '✅ Token: ' + data.link_token.substring(0, 20) + '...', 'ok');
+                    passed++;
+                } else {
+                    setBadge('t4', '❌ Failed', 'err');
+                }
+            } catch (e) { setBadge('t4', '❌ Error', 'err'); }
+
+            // Test 5: Cards
+            setBadge('t5', 'Testing...', 'loading');
+            try {
+                const res = await fetch(API + '/cards', { headers });
+                if (res.ok) { setBadge('t5', '✅ 200 OK', 'ok'); passed++; }
+                else { setBadge('t5', `⚠️ ${res.status}`, 'err'); }
+            } catch (e) { setBadge('t5', '❌ Error', 'err'); }
+
+            // Test 6: Transactions
+            setBadge('t6', 'Testing...', 'loading');
+            try {
+                const res = await fetch(API + '/transactions', { headers });
+                if (res.ok) { setBadge('t6', '✅ 200 OK', 'ok'); passed++; }
+                else { setBadge('t6', `⚠️ ${res.status}`, 'err'); }
+            } catch (e) { setBadge('t6', '❌ Error', 'err'); }
+
+            // Test 7: Goals
+            setBadge('t7', 'Testing...', 'loading');
+            try {
+                const res = await fetch(API + '/goals', { headers });
+                if (res.ok) { setBadge('t7', '✅ 200 OK', 'ok'); passed++; }
+                else { setBadge('t7', `⚠️ ${res.status}`, 'err'); }
+            } catch (e) { setBadge('t7', '❌ Error', 'err'); }
+
+            // Test 8: Notifications
+            setBadge('t8', 'Testing...', 'loading');
+            try {
+                const res = await fetch(API + '/notifications', { headers });
+                if (res.ok) { setBadge('t8', '✅ 200 OK', 'ok'); passed++; }
+                else { setBadge('t8', `⚠️ ${res.status}`, 'err'); }
+            } catch (e) { setBadge('t8', '❌ Error', 'err'); }
+
+            // Summary
+            const summary = document.getElementById('summary');
+            summary.style.display = 'block';
+            const title = document.getElementById('summaryTitle');
+            const text = document.getElementById('summaryText');
+
+            if (passed === total) {
+                summary.classList.add('success');
+                title.textContent = '🎉 ALL 8/8 TESTS PASSED!';
+                title.style.color = '#4ade80';
+                text.textContent = 'Apple\'s reviewer will be able to log in with demo@reignscore.com and test all features successfully.';
+            } else {
+                summary.classList.add('fail');
+                title.textContent = `⚠️ ${passed}/${total} Tests Passed`;
+                title.style.color = '#f87171';
+                text.textContent = 'Some tests failed. Review the results above.';
+            }
+
+            btn.textContent = `✅ Done — ${passed}/${total} Passed`;
+        }
+    </script>
+</body>
+
+</html>

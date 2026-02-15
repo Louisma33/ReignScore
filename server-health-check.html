@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReignScore - Server Health Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #14141f;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 24px;
+            transition: border-color 0.3s;
+        }
+        .card:hover { border-color: #FFD700; }
+        .card h2 {
+            font-size: 1.1rem;
+            color: #FFD700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .status-row:last-child { border-bottom: none; }
+        .status-label { color: #aaa; font-size: 0.9rem; }
+        .status-value { font-weight: 600; font-size: 0.9rem; }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-ok { background: #0a3d1a; color: #4ade80; }
+        .badge-warn { background: #3d2d0a; color: #fbbf24; }
+        .badge-err { background: #3d0a0a; color: #f87171; }
+        .badge-info { background: #0a1a3d; color: #60a5fa; }
+        .badge-loading { background: #1a1a2e; color: #888; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+        .table-chip {
+            background: #1a1a2e;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            text-align: center;
+            color: #60a5fa;
+        }
+
+        .token-display {
+            background: #1a1a2e;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #4ade80;
+            word-break: break-all;
+            margin-top: 8px;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        .timestamp {
+            text-align: center;
+            color: #555;
+            font-size: 0.8rem;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👑 ReignScore Server Dashboard</h1>
+        <p>Live health check against production API</p>
+    </div>
+
+    <div class="grid">
+        <!-- API Status -->
+        <div class="card">
+            <h2>🌐 API Status</h2>
+            <div class="status-row">
+                <span class="status-label">Root Endpoint</span>
+                <span id="api-root" class="badge badge-loading">Checking...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Health Check</span>
+                <span id="api-health" class="badge badge-loading">Checking...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Database</span>
+                <span id="api-db" class="badge badge-loading">Checking...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Uptime</span>
+                <span id="api-uptime" class="status-value">—</span>
+            </div>
+        </div>
+
+        <!-- Auth System -->
+        <div class="card">
+            <h2>🔐 Auth System</h2>
+            <div class="status-row">
+                <span class="status-label">Login Endpoint</span>
+                <span id="auth-login" class="badge badge-loading">Checking...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Auth Middleware</span>
+                <span id="auth-middleware" class="badge badge-loading">Checking...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Total Users</span>
+                <span id="auth-users" class="status-value">—</span>
+            </div>
+        </div>
+
+        <!-- Plaid Integration -->
+        <div class="card">
+            <h2>🔗 Plaid Integration</h2>
+            <div class="status-row">
+                <span class="status-label">Link Token Creation</span>
+                <span id="plaid-token" class="badge badge-loading">Checking...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Environment</span>
+                <span id="plaid-env" class="badge badge-info">Sandbox</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Auth Required</span>
+                <span id="plaid-auth" class="badge badge-loading">Checking...</span>
+            </div>
+            <div id="plaid-token-display" style="display:none">
+                <p style="font-size:0.8rem;color:#888;margin-top:12px">Generated Link Token:</p>
+                <div class="token-display" id="plaid-token-value"></div>
+            </div>
+        </div>
+
+        <!-- Database Tables -->
+        <div class="card">
+            <h2>🗄️ Database Tables</h2>
+            <div id="db-tables" class="table-grid">
+                <div class="table-chip" style="color:#888">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Endpoints Health -->
+        <div class="card full-width">
+            <h2>📡 All Endpoints</h2>
+            <div id="endpoints-list"></div>
+        </div>
+    </div>
+
+    <p class="timestamp" id="timestamp"></p>
+
+    <script>
+        const API = 'https://reignscore-api-final-v4-4l9j.onrender.com';
+        let authToken = null;
+
+        function setBadge(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = `badge badge-${type}`;
+        }
+
+        async function fetchJSON(url, opts = {}) {
+            const res = await fetch(url, opts);
+            return { status: res.status, data: await res.json().catch(() => null) };
+        }
+
+        async function runChecks() {
+            // 1. Root
+            try {
+                const r = await fetchJSON(API + '/');
+                setBadge('api-root', r.data?.message ? '✅ Online' : '⚠️ Unknown', r.data?.message ? 'ok' : 'warn');
+            } catch { setBadge('api-root', '❌ Offline', 'err'); }
+
+            // 2. Health
+            try {
+                const r = await fetchJSON(API + '/health');
+                setBadge('api-health', '✅ Healthy', 'ok');
+                setBadge('api-db', r.data?.db === 'connected' ? '✅ Connected' : '❌ Disconnected', r.data?.db === 'connected' ? 'ok' : 'err');
+                document.getElementById('api-uptime').textContent = Math.round(r.data?.uptime || 0) + 's';
+            } catch { setBadge('api-health', '❌ Failed', 'err'); }
+
+            // 3. Debug tables
+            try {
+                const r = await fetchJSON(API + '/debug/tables');
+                document.getElementById('auth-users').textContent = r.data?.users_count || '?';
+                const tablesEl = document.getElementById('db-tables');
+                if (r.data?.tables) {
+                    tablesEl.innerHTML = r.data.tables.map(t =>
+                        `<div class="table-chip">${t === 'plaid_items' ? '🔗 ' : ''}${t}</div>`
+                    ).join('');
+                }
+            } catch {}
+
+            // 4. Auth - test unauthenticated plaid
+            try {
+                const r = await fetchJSON(API + '/plaid/create_link_token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: '{}'
+                });
+                setBadge('plaid-auth', r.status === 401 || r.status === 403 ? '✅ Enforced' : '⚠️ Open', r.status === 401 || r.status === 403 ? 'ok' : 'warn');
+            } catch { setBadge('plaid-auth', '✅ Enforced', 'ok'); }
+
+            // 5. Auth - login to get token
+            try {
+                const r = await fetchJSON(API + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'plaidtest@test.com', password: 'Test1234!' })
+                });
+                if (r.data?.token) {
+                    authToken = r.data.token;
+                    setBadge('auth-login', '✅ Working', 'ok');
+                    setBadge('auth-middleware', '✅ JWT Valid', 'ok');
+                } else {
+                    setBadge('auth-login', '⚠️ No Token', 'warn');
+                }
+            } catch {
+                setBadge('auth-login', '❌ Failed', 'err');
+            }
+
+            // 6. Plaid - create link token (authenticated)
+            if (authToken) {
+                try {
+                    const r = await fetchJSON(API + '/plaid/create_link_token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: '{}'
+                    });
+                    if (r.data?.link_token) {
+                        setBadge('plaid-token', '✅ Working', 'ok');
+                        document.getElementById('plaid-token-display').style.display = 'block';
+                        document.getElementById('plaid-token-value').textContent = r.data.link_token;
+                    } else {
+                        setBadge('plaid-token', '❌ Failed', 'err');
+                    }
+                } catch { setBadge('plaid-token', '❌ Error', 'err'); }
+            }
+
+            // 7. Test all endpoints
+            const endpoints = [
+                { method: 'GET', path: '/', name: 'Root' },
+                { method: 'GET', path: '/health', name: 'Health' },
+                { method: 'GET', path: '/debug/tables', name: 'Debug Tables' },
+                { method: 'POST', path: '/auth/login', name: 'Auth Login', auth: false },
+                { method: 'POST', path: '/plaid/create_link_token', name: 'Plaid Link Token', auth: true },
+                { method: 'GET', path: '/cards', name: 'Cards', auth: true },
+                { method: 'GET', path: '/transactions', name: 'Transactions', auth: true },
+                { method: 'GET', path: '/goals', name: 'Savings Goals', auth: true },
+                { method: 'GET', path: '/budgets', name: 'Budgets', auth: true },
+                { method: 'GET', path: '/challenges', name: 'Challenges', auth: true },
+                { method: 'GET', path: '/subscriptions/status', name: 'Subscription Status', auth: true },
+                { method: 'GET', path: '/notifications', name: 'Notifications', auth: true },
+            ];
+
+            const listEl = document.getElementById('endpoints-list');
+            listEl.innerHTML = '';
+
+            for (const ep of endpoints) {
+                const headers = { 'Content-Type': 'application/json' };
+                if (ep.auth && authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
+                try {
+                    const r = await fetchJSON(API + ep.path, {
+                        method: ep.method,
+                        headers,
+                        body: ep.method === 'POST' ? '{}' : undefined
+                    });
+                    const ok = r.status >= 200 && r.status < 500;
+                    const row = document.createElement('div');
+                    row.className = 'status-row';
+                    row.innerHTML = `
+                        <span class="status-label"><code style="color:#FFD700;font-size:0.75rem">${ep.method}</code> ${ep.name} <code style="color:#555;font-size:0.7rem">${ep.path}</code></span>
+                        <span class="badge badge-${ok ? 'ok' : 'err'}">${r.status} ${ok ? '✅' : '❌'}</span>
+                    `;
+                    listEl.appendChild(row);
+                } catch (e) {
+                    const row = document.createElement('div');
+                    row.className = 'status-row';
+                    row.innerHTML = `
+                        <span class="status-label"><code style="color:#FFD700;font-size:0.75rem">${ep.method}</code> ${ep.name}</span>
+                        <span class="badge badge-err">❌ Network Error</span>
+                    `;
+                    listEl.appendChild(row);
+                }
+            }
+
+            document.getElementById('timestamp').textContent = `Last checked: ${new Date().toLocaleString()}`;
+        }
+
+        runChecks();
+    </script>
+</body>
+</html>

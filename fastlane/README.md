@@ -21,7 +21,15 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios submit_for_review
 ```
 
-Submit app for review
+Submit app for review with demo credentials
+
+### ios resubmit
+
+```sh
+[bundle exec] fastlane ios resubmit
+```
+
+Update review info only then resubmit
 
 ----
 
