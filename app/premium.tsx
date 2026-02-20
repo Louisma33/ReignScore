@@ -5,7 +5,7 @@ import {
     ActivityIndicator,
     Alert,
     Dimensions,
-    Linking,
+    Platform,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
@@ -16,9 +16,9 @@ import { ThemedText } from '../components/themed-text';
 import { ThemedView } from '../components/themed-view';
 import { IconSymbol } from '../components/ui/icon-symbol';
 import { Colors } from '../constants/theme';
-import { api } from '../services/api';
 
 const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
 
 // Feature list for the Noble Plan
 const FEATURES = [
@@ -35,19 +35,19 @@ export default function PremiumScreen() {
     const handleSubscribe = async () => {
         setLoading(true);
         try {
-            // Call API to create checkout session
-            const response = await api.createCheckoutSession('premium');
-
-            if (response && response.url) {
-                // Open Stripe Checkout
-                const canOpen = await Linking.canOpenURL(response.url);
-                if (canOpen) {
-                    await Linking.openURL(response.url);
-                } else {
-                    Alert.alert('Error', 'Could not open payment link.');
-                }
+            // iOS must use Apple In-App Purchases
+            if (Platform.OS === 'ios') {
+                Alert.alert(
+                    'Coming Soon',
+                    'Noble membership will be available as an in-app subscription soon. Stay tuned!',
+                    [{ text: 'OK' }]
+                );
             } else {
-                Alert.alert('Error', 'Failed to initiate checkout.');
+                Alert.alert(
+                    'Coming Soon',
+                    'Noble membership subscriptions are being set up. Check back soon!',
+                    [{ text: 'OK' }]
+                );
             }
         } catch (error) {
             console.error('Subscription error:', error);
@@ -118,16 +118,20 @@ const styles = StyleSheet.create({
     content: {
         padding: 24,
         alignItems: 'center',
+        maxWidth: isTablet ? 600 : undefined,
+        alignSelf: 'center',
+        width: '100%',
     },
     hero: {
         alignItems: 'center',
         marginBottom: 32,
         marginTop: 20,
+        paddingHorizontal: 16,
     },
     crownContainer: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
+        width: isTablet ? 140 : 120,
+        height: isTablet ? 140 : 120,
+        borderRadius: isTablet ? 70 : 60,
         backgroundColor: 'rgba(255, 215, 0, 0.1)',
         justifyContent: 'center',
         alignItems: 'center',
@@ -136,23 +140,26 @@ const styles = StyleSheet.create({
         borderColor: Colors.common.gold,
     },
     heroTitle: {
-        fontSize: 32,
+        fontSize: isTablet ? 36 : 32,
         color: Colors.common.gold,
         marginBottom: 8,
         letterSpacing: 1,
+        textAlign: 'center',
     },
     heroSubtitle: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: isTablet ? 18 : 16,
         color: '#888',
-        maxWidth: width * 0.8,
-        lineHeight: 24,
+        maxWidth: isTablet ? 500 : width * 0.8,
+        lineHeight: isTablet ? 28 : 24,
+        flexShrink: 1,
     },
     card: {
         width: '100%',
+        maxWidth: isTablet ? 500 : undefined,
         backgroundColor: '#1E1E1E',
         borderRadius: 24,
-        padding: 24,
+        padding: isTablet ? 32 : 24,
         marginBottom: 32,
         borderWidth: 1,
         borderColor: 'rgba(255, 215, 0, 0.3)',
@@ -163,14 +170,14 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     price: {
-        fontSize: 48,
+        fontSize: isTablet ? 52 : 48,
         fontWeight: 'bold',
         color: Colors.common.white,
         textAlign: 'center',
         marginBottom: 16,
     },
     period: {
-        fontSize: 16,
+        fontSize: isTablet ? 18 : 16,
         color: '#888',
         fontWeight: 'normal',
     },
@@ -186,13 +193,15 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     featureText: {
-        fontSize: 16,
+        fontSize: isTablet ? 18 : 16,
         color: '#EEE',
+        flexShrink: 1,
     },
     subscribeButton: {
         width: '100%',
+        maxWidth: isTablet ? 500 : undefined,
         backgroundColor: Colors.common.gold,
-        paddingVertical: 18,
+        paddingVertical: isTablet ? 20 : 18,
         borderRadius: 12,
         alignItems: 'center',
         shadowColor: Colors.common.gold,

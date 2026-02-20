@@ -148,4 +148,34 @@ router.post('/forgot-password', validateRequest(['email']), async (req: Request,
     }
 });
 
+// DELETE account - required by Apple App Store guideline 5.1.1(v)
+router.delete('/account', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+        console.log(`[Account Deletion] Deleting all data for user ${userId}`);
+
+        // Delete all user data from related tables
+        await query('DELETE FROM transactions WHERE user_id = $1', [userId]);
+        await query('DELETE FROM budgets WHERE user_id = $1', [userId]);
+        await query('DELETE FROM credit_cards WHERE user_id = $1', [userId]);
+        await query('DELETE FROM credit_scores WHERE user_id = $1', [userId]);
+        await query('DELETE FROM disputes WHERE user_id = $1', [userId]);
+        await query('DELETE FROM plaid_items WHERE user_id = $1', [userId]);
+        await query('DELETE FROM user_challenges WHERE user_id = $1', [userId]);
+        await query('DELETE FROM referrals WHERE referrer_id = $1 OR referred_id = $1', [userId]);
+        // Finally delete the user
+        await query('DELETE FROM users WHERE id = $1', [userId]);
+
+        console.log(`[Account Deletion] Successfully deleted user ${userId}`);
+        res.status(204).send();
+    } catch (error) {
+        console.error('[Account Deletion] Error:', error);
+        res.status(500).json({ message: 'Failed to delete account' });
+    }
+});
+
 export default router;

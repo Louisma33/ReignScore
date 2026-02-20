@@ -69,17 +69,40 @@ export default function InsightsScreen() {
 
             const query = start ? `?startDate=${start.toISOString().split('T')[0]}&endDate=${end.toISOString().split('T')[0]}` : '';
 
-            const [statsData, trendData, budgetData] = await Promise.all([
-                api.get(`/transactions/stats${query}`),
-                api.get(`/transactions/stats/trend${query}`),
-                api.get('/budgets/status')
-            ]);
+            // Fetch data with individual error handling to prevent crash
+            let statsData: CategoryStat[] = [];
+            let trendData: any[] = [];
+            let budgetData: BudgetStatus[] = [];
+
+            try {
+                const results = await Promise.allSettled([
+                    api.get(`/transactions/stats${query}`),
+                    api.get(`/transactions/stats/trend${query}`),
+                    api.get('/budgets/status')
+                ]);
+
+                if (results[0].status === 'fulfilled' && Array.isArray(results[0].value)) {
+                    statsData = results[0].value;
+                }
+                if (results[1].status === 'fulfilled' && Array.isArray(results[1].value)) {
+                    trendData = results[1].value;
+                }
+                if (results[2].status === 'fulfilled' && Array.isArray(results[2].value)) {
+                    budgetData = results[2].value;
+                }
+            } catch (apiError) {
+                console.warn('API fetch error in insights:', apiError);
+            }
 
             setStats(statsData);
             setTrend(trendData);
             setBudgetStatus(budgetData);
         } catch (e) {
             console.error('Failed to load insights', e);
+            // Ensure state is reset to safe defaults on error
+            setStats([]);
+            setTrend([]);
+            setBudgetStatus([]);
         } finally {
             setLoading(false);
         }
@@ -155,7 +178,10 @@ export default function InsightsScreen() {
         );
     }
 
-    const totalSpent = stats.reduce((sum, s) => sum + parseFloat(s.total), 0);
+    const totalSpent = Array.isArray(stats) ? stats.reduce((sum, s) => {
+        const val = parseFloat(s?.total || '0');
+        return sum + (isNaN(val) ? 0 : val);
+    }, 0) : 0;
 
     return (
         <View style={[styles.container, { backgroundColor }]}>

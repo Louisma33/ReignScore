@@ -6,6 +6,7 @@ import { SafeLink } from '@/components/ui/SafeLink';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { api } from '@/services/api';
 import { biometrics } from '@/utils/biometrics';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -90,6 +91,41 @@ export default function SettingsScreen() {
 
     const getInitials = (name: string) => {
         return name?.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || '??';
+    };
+
+    const handleDeleteAccount = () => {
+        const confirmDelete = async () => {
+            try {
+                await api.del('/auth/account');
+                await signOut();
+                router.replace('/auth/login');
+            } catch (error) {
+                console.error('Delete account error:', error);
+                Alert.alert('Error', 'Failed to delete account. Please contact support@reignscore.com');
+            }
+        };
+
+        if (Platform.OS === 'web') {
+            const confirmed = window.confirm(
+                'Are you sure you want to permanently delete your account? This action cannot be undone. All your data will be permanently removed.'
+            );
+            if (confirmed) {
+                confirmDelete();
+            }
+        } else {
+            Alert.alert(
+                'Delete Account',
+                'Are you sure you want to permanently delete your account? This action cannot be undone. All your data will be permanently removed.',
+                [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                        text: 'Delete Account',
+                        style: 'destructive',
+                        onPress: confirmDelete
+                    }
+                ]
+            );
+        }
     };
 
     return (
@@ -257,13 +293,19 @@ export default function SettingsScreen() {
                     </ThemedView>
                 </View>
 
+                {/* Delete Account */}
+                <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
+                    <IconSymbol name="trash.fill" size={20} color="#FF3B30" />
+                    <ThemedText style={styles.deleteText}>Delete Account</ThemedText>
+                </TouchableOpacity>
+
                 {/* Logout */}
                 <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
                     <IconSymbol name="arrow.right.square" size={20} color="#FF3B30" />
                     <ThemedText style={styles.logoutText}>Sign Out</ThemedText>
                 </TouchableOpacity>
 
-                <ThemedText style={styles.versionText}>Version 1.0.0 (Build 104)</ThemedText>
+                <ThemedText style={styles.versionText}>Version 1.1.0 (Build 46)</ThemedText>
 
             </ScrollView>
         </ThemedView>
@@ -335,5 +377,18 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     logoutText: { color: '#FF3B30', fontWeight: 'bold', fontSize: 16 },
+    deleteButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        backgroundColor: 'transparent',
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#3D0000',
+        marginTop: 20
+    },
+    deleteText: { color: '#FF3B30', fontWeight: '600', fontSize: 14 },
     versionText: { textAlign: 'center', color: '#444', marginTop: 20, fontSize: 12 }
 });
