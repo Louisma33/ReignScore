@@ -61,8 +61,8 @@ Capture high-res screens of these 6 key views:
 | Backend API | ✅ Healthy (DB connected) | https://reignscore-api-final-v4-4l9j.onrender.com |
 | Website | ✅ Live (200 OK) | https://reignscore.com |
 | Plaid API | ✅ **Sandbox Connected** (real tokens) | Sandbox mode |
-| iOS App | ✅ **Submitted for Apple Review** (awaiting approval) | Build 23, v1.1.0 |
-| Android App | ✅ **Google Play Store Listing Complete** | Version code 44 |
+| iOS App | 🔄 **Rejected - Fixes applied, rebuilding** | Build 24, v1.1.0 |
+| Android App | ✅ **Internal Testing Published** | Version code 46 |
 | GitHub Repo | ✅ Renamed | https://github.com/Louisma33/ReignScore |
 
 ### iOS App Store Status (Updated 2026-02-11)
@@ -95,8 +95,8 @@ Capture high-res screens of these 6 key views:
 
 ### Build Artifacts
 - **iOS .ipa (Store)**: https://expo.dev/artifacts/eas/jxqcMrW8Q6bwwtouGy2nKL.ipa
-- **iOS .ipa (Preview/Testing)**: https://expo.dev/artifacts/eas/7kipmQY1Bn5h1eiAvMksRx.ipa
-- **Android .aab**: https://expo.dev/artifacts/eas/gSKGBKVZJkguJi2Wqj8nbf.aab
+- **iOS .ipa**: https://expo.dev/artifacts/eas/n64vQ7GSPhaXefREmX723S.ipa
+- **Android .aab**: https://expo.dev/artifacts/eas/ogVdbyvTa2N3PdwojTnvcs.aab
 
 ### Latest iOS Preview Build (for device testing)
 - **Build ID**: 3348b03b-edc3-45fc-857b-fc88ffa014c9
