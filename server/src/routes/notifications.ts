@@ -1,22 +1,29 @@
 import { Response, Router } from 'express';
 import { query } from '../db';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import { NotificationSchedulerService } from '../services/notificationScheduler';
 
 const router = Router();
 
-// Save Push Token
+// Save Push Token (Phase 9.1 - Multi-device support)
 router.post('/push-token', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-        const { token } = req.body;
+        const { token, deviceType } = req.body;
         if (!token) {
             return res.status(400).json({ message: 'Token is required' });
         }
 
-        await query(
-            'UPDATE users SET push_token = $1 WHERE id = $2',
-            [token, req.user.id]
+        const success = await NotificationSchedulerService.registerPushToken(
+            req.user.id,
+            token,
+            deviceType
         );
-        res.json({ message: 'Push token saved' });
+
+        if (success) {
+            res.json({ message: 'Push token registered successfully' });
+        } else {
+            res.status(400).json({ message: 'Invalid push token format' });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
@@ -27,7 +34,7 @@ router.post('/push-token', authenticateToken, async (req: AuthRequest, res: Resp
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
         const result = await query(
-            'SELECT * FROM notifications WHERE user_id = $1 ORDER BY created_at DESC',
+            'SELECT * FROM notifications WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50',
             [req.user.id]
         );
         res.json(result.rows);
@@ -52,29 +59,51 @@ router.put('/:id/read', authenticateToken, async (req: AuthRequest, res: Respons
     }
 });
 
-// Trigger check (Simulated logic for now - normally a cron job)
+// Mark all as read
+router.put('/read-all', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+        await query(
+            'UPDATE notifications SET is_read = true WHERE user_id = $1 AND is_read = false',
+            [req.user.id]
+        );
+        res.json({ message: 'All notifications marked as read' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Phase 9.1: Trigger Smart Reminders Cycle
+router.post('/schedule-reminders', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+        const result = await NotificationSchedulerService.runFullCycle();
+        res.json({
+            message: 'Smart Reminders cycle complete',
+            ...result
+        });
+    } catch (error) {
+        console.error('Schedule reminders error:', error);
+        res.status(500).json({ message: 'Failed to run notification cycle' });
+    }
+});
+
+// Legacy: Trigger check for due dates
 router.post('/check-due-dates', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user.id;
-
-        // Fetch user's cards
         const cardsResult = await query('SELECT * FROM credit_cards WHERE user_id = $1', [userId]);
         const cards = cardsResult.rows;
 
         const today = new Date();
         const currentDay = today.getDate();
-
         let notificationsCreated = 0;
 
         for (const card of cards) {
             const dueDay = card.due_day;
-
-            // strict logic: if due day is within 3 days
             let daysLeft = dueDay - currentDay;
-            if (daysLeft < 0) daysLeft += 30; // approx next month wrap
+            if (daysLeft < 0) daysLeft += 30;
 
             if (daysLeft <= 3 && daysLeft >= 0) {
-                // Check if notification already exists for today to avoid spam
                 const existing = await query(
                     `SELECT * FROM notifications 
                      WHERE user_id = $1 AND title LIKE $2 AND created_at > NOW() - INTERVAL '1 day'`,
@@ -93,7 +122,20 @@ router.post('/check-due-dates', authenticateToken, async (req: AuthRequest, res:
         }
 
         res.json({ message: `Check complete. ${notificationsCreated} notifications generated.` });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
+// Get unread count
+router.get('/unread-count', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+        const result = await query(
+            'SELECT COUNT(*) as count FROM notifications WHERE user_id = $1 AND is_read = false',
+            [req.user.id]
+        );
+        res.json({ count: parseInt(result.rows[0].count) });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

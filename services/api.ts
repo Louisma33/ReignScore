@@ -148,7 +148,46 @@ export const api = {
     },
     joinChallenge: async (id: number, token?: string) => {
         return api.post(`/challenges/${id}/join`, {}, token);
-    }
+    },
+
+    // Phase 9.1: Smart Reminders
+    scheduleReminders: async (token?: string) => {
+        return api.post('/notifications/schedule-reminders', {}, token);
+    },
+    getUnreadNotificationCount: async (token?: string) => {
+        return api.get('/notifications/unread-count', token);
+    },
+    markAllNotificationsRead: async (token?: string) => {
+        return api.put('/notifications/read-all', {}, token);
+    },
+
+    // Phase 9.2: Royal Decree (Referrals)
+    getReferralCode: async (token?: string) => {
+        return api.get('/referrals/my-code', token);
+    },
+    getReferralStats: async (token?: string) => {
+        return api.get('/referrals/stats', token);
+    },
+    claimReferral: async (code: string, token?: string) => {
+        return api.post('/referrals/claim', { code }, token);
+    },
+    getReferralLeaderboard: async (token?: string) => {
+        return api.get('/referrals/leaderboard', token);
+    },
+
+    // Phase 9.3: Reign Advisor
+    sendAdvisorMessage: async (message: string, token?: string) => {
+        return api.post('/advisor/chat', { message }, token);
+    },
+    getAdvisorHistory: async (token?: string) => {
+        return api.get('/advisor/history', token);
+    },
+    clearAdvisorHistory: async (token?: string) => {
+        return api.del('/advisor/history', token);
+    },
+    getAdvisorRateLimit: async (token?: string) => {
+        return api.get('/advisor/rate-limit', token);
+    },
 };
 
 // Add response timeout (45s for Render free tier cold starts)

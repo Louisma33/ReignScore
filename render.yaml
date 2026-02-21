@@ -18,13 +18,17 @@ services:
           name: reignscore-db
           property: connectionString
       - key: STRIPE_SECRET_KEY
-        value: mk_1SviRQKp2Fwwk4U0uGIZMCjO
+        sync: false # SET IN RENDER DASHBOARD - Must be sk_test_ or sk_live_ format
       - key: PLAID_ENV
         value: sandbox
       - key: PLAID_CLIENT_ID
         value: 6956f5ad168aa50020a8e836
       - key: PLAID_SECRET
         value: 23d42a97bb470f0990cdcc44577050
+      - key: ANTHROPIC_API_KEY
+        sync: false # SET IN RENDER DASHBOARD - Required for Reign Advisor AI
+      - key: OPENAI_API_KEY
+        sync: false # SET IN RENDER DASHBOARD - Optional, fallback for Advisor
     healthCheckPath: /health
 
   - type: static

@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "ReignScore",
-    "slug": "CardReign",
-    "version": "1.1.0",
+    "slug": "reignscore",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "reignscore",
@@ -45,12 +45,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.jpg",
-          "imageWidth": 200,
+          "image": "./assets/images/reignscore-new-logo.jpg",
+          "imageWidth": 280,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#1a1a1a",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#1a1a1a"
           }
         }
       ],

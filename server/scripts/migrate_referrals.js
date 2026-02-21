@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://cardreign:cardreign@localhost:5432/cardreign'
+    connectionString: process.env.DATABASE_URL || 'postgresql://reignscore:reignscore@localhost:5432/reignscore'
 });
 
 async function migrateReferrals() {

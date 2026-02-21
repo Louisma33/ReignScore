@@ -129,3 +129,43 @@ CREATE TABLE IF NOT EXISTS referrals (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(referred_user_id) -- A user can only be referred once
 );
+
+-- Phase 9.1: Smart Reminders (Push Notification Scheduler)
+CREATE TABLE IF NOT EXISTS push_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    expo_push_token TEXT NOT NULL,
+    device_type VARCHAR(20), -- ios, android
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, expo_push_token)
+);
+
+CREATE TABLE IF NOT EXISTS scheduled_notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL, -- payment_reminder, high_utilization, statement_close
+    title VARCHAR(255) NOT NULL,
+    body TEXT NOT NULL,
+    scheduled_for TIMESTAMP WITH TIME ZONE NOT NULL,
+    payload JSONB DEFAULT '{}',
+    sent_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_scheduled_notifications_pending
+    ON scheduled_notifications(scheduled_for) WHERE sent_at IS NULL;
+
+-- Phase 9.3: Reign Advisor (AI Chat History)
+CREATE TABLE IF NOT EXISTS advisor_conversations (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS advisor_messages (
+    id SERIAL PRIMARY KEY,
+    conversation_id INTEGER REFERENCES advisor_conversations(id) ON DELETE CASCADE,
+    role VARCHAR(20) NOT NULL, -- user, assistant
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

@@ -25,8 +25,11 @@ export function usePushNotifications() {
         registerForPushNotificationsAsync().then(token => {
             setExpoPushToken(token);
             if (token) {
-                // Send to backend
-                api.post('/notifications/push-token', { token }).catch(err => {
+                // Send to backend with device type
+                api.post('/notifications/push-token', {
+                    token,
+                    deviceType: Platform.OS
+                }).catch(err => {
                     console.log('Failed to save push token', err);
                 });
             }

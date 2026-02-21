@@ -305,7 +305,7 @@ export default function SettingsScreen() {
                     <ThemedText style={styles.logoutText}>Sign Out</ThemedText>
                 </TouchableOpacity>
 
-                <ThemedText style={styles.versionText}>Version 1.1.0 (Build 46)</ThemedText>
+                <ThemedText style={styles.versionText}>Version 1.2.0 (Build 47)</ThemedText>
 
             </ScrollView>
         </ThemedView>

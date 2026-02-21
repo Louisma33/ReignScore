@@ -178,7 +178,7 @@ export default function Home() {
 
           <h2 className="text-4xl md:text-6xl font-bold mb-8 relative z-10">Start Your Reign Today</h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 relative z-10">
-            Join thousands of others who are actively building their credit score and financial future with CardReign.
+            Join thousands of others who are actively building their credit score and financial future with ReignScore.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">

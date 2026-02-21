@@ -2,7 +2,7 @@ const { query } = require('../dist/db'); // Use dist/db if running with node, or
 // Using pg directly for simplicity in a standalone script without ts-node dependency issues
 const { Pool } = require('pg');
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://cardreign:cardreign@localhost:5432/cardreign'
+    connectionString: process.env.DATABASE_URL || 'postgresql://reignscore:reignscore@localhost:5432/reignscore'
 });
 
 async function runMigration() {

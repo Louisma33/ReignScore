@@ -52,9 +52,8 @@ export default function SignupScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
-                <Text style={styles.title}>ReignScore</Text>
                 <Image
-                    source={require('../../assets/images/icon.png')}
+                    source={require('../../assets/images/reignscore-new-logo.jpg')}
                     style={styles.logo}
                     resizeMode="contain"
                 />
@@ -124,9 +123,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     logo: {
-        width: 80,
-        height: 80,
-        marginBottom: 10,
+        width: 220,
+        height: 170,
     },
     title: {
         fontSize: 32,
