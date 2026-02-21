@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ReignScore",
-    "slug": "reignscore",
+    "slug": "CardReign",
     "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -30,8 +30,6 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [
-        "android.permission.USE_BIOMETRIC",
-        "android.permission.USE_FINGERPRINT",
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT"
       ]
@@ -104,6 +102,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/093a55ba-7e71-4b52-a70c-8505e84b8abc"
-    }
+    },
+    "owner": "williaml33"
   }
 }
