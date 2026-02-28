@@ -10,7 +10,10 @@ import { api } from '@/services/api';
 import { biometrics } from '@/utils/biometrics';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Platform, ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Platform, ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+
+const { width: screenWidth } = Dimensions.get('window');
+const isTablet = screenWidth >= 768;
 
 export default function SettingsScreen() {
     const { user, signOut, token } = useAuth();
@@ -315,7 +318,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
     container: { flex: 1, paddingTop: 60 },
     header: { paddingHorizontal: 20, marginBottom: 20 },
-    content: { paddingHorizontal: 20, paddingBottom: 40 },
+    content: { paddingHorizontal: isTablet ? 40 : 20, paddingBottom: 40, maxWidth: isTablet ? 700 : undefined, alignSelf: isTablet ? 'center' as const : undefined, width: '100%' },
     section: { marginBottom: 30 },
     sectionTitle: { fontSize: 14, color: '#888', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 1 },
     card: {

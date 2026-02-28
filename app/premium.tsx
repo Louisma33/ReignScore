@@ -104,7 +104,7 @@ export default function PremiumScreen() {
                 </TouchableOpacity>
 
                 <ThemedText style={styles.disclaimer}>
-                    Cancel anytime. Secure payment via Stripe.
+                    Cancel anytime.{Platform.OS === 'ios' ? ' Subscription managed through your Apple ID.' : ' Secure payment processing.'}
                 </ThemedText>
             </ScrollView>
         </ThemedView>

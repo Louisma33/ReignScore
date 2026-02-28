@@ -10,7 +10,10 @@ import { api } from '@/services/api';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+const { width: screenWidth } = Dimensions.get('window');
+const isTablet = screenWidth >= 768;
 
 type CategoryStat = {
     category: string;
@@ -358,7 +361,7 @@ const styles = StyleSheet.create({
     filterTextActive: {
         color: '#000'
     },
-    scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
+    scrollContent: { paddingHorizontal: isTablet ? 40 : 20, paddingBottom: 40, maxWidth: isTablet ? 700 : undefined, alignSelf: isTablet ? 'center' as const : undefined, width: '100%' },
 
     heroSection: {
         alignItems: 'center',

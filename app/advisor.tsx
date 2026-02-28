@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import React, { useRef, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Message {
@@ -49,7 +49,13 @@ export default function ReignAdvisorScreen() {
         try {
             const token = await SecureStore.getItemAsync('token');
             if (!token) {
-                Alert.alert('Error', 'You must be logged in.');
+                const errorMsg: Message = {
+                    id: (Date.now() + 1).toString(),
+                    text: "Please log in to use the Reign Advisor. Your session may have expired.",
+                    sender: 'ai',
+                    timestamp: Date.now()
+                };
+                setMessages(prev => [...prev, errorMsg]);
                 setIsLoading(false);
                 return;
             }
@@ -63,9 +69,14 @@ export default function ReignAdvisorScreen() {
                 body: JSON.stringify({ message: userMsg.text })
             });
 
-            const data = await response.json();
+            let data: any;
+            try {
+                data = await response.json();
+            } catch {
+                data = { message: null };
+            }
 
-            if (response.ok) {
+            if (response.ok && data?.message) {
                 const aiMsg: Message = {
                     id: (Date.now() + 1).toString(),
                     text: data.message,
@@ -74,12 +85,26 @@ export default function ReignAdvisorScreen() {
                 };
                 setMessages(prev => [...prev, aiMsg]);
             } else {
-                Alert.alert('Advisor Error', data.message || 'Failed to get advice.');
+                // Show error as a chat message instead of Alert
+                const errorMsg: Message = {
+                    id: (Date.now() + 1).toString(),
+                    text: data?.message || "I'm having trouble connecting right now. Please try again in a moment. 🔄",
+                    sender: 'ai',
+                    timestamp: Date.now()
+                };
+                setMessages(prev => [...prev, errorMsg]);
             }
 
         } catch (error) {
-            console.error(error);
-            Alert.alert('Connection Error', 'Could not reach Reign Advisor.');
+            console.error('Advisor error:', error);
+            // Show connection error as chat message instead of Alert
+            const errorMsg: Message = {
+                id: (Date.now() + 1).toString(),
+                text: "I'm temporarily unavailable. Please check your internet connection and try again. 🔄",
+                sender: 'ai',
+                timestamp: Date.now()
+            };
+            setMessages(prev => [...prev, errorMsg]);
         } finally {
             setIsLoading(false);
             setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);

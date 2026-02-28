@@ -11,7 +11,10 @@ import { Colors } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { api } from '@/services/api';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, FlatList, RefreshControl, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+
+const { width: screenWidth } = Dimensions.get('window');
+const isTablet = screenWidth >= 768;
 
 type CategoryStat = {
     category: string;
@@ -126,23 +129,45 @@ export default function TransactionsScreen() {
             // Initial fetch limit
             txParams.append('limit', '50');
 
-            const promises = [
+            // Use Promise.allSettled to prevent crash if any endpoint fails
+            const results = await Promise.allSettled([
                 api.get(statsUrl),
                 api.get(trendUrl),
                 api.get(utilizationUrl),
                 api.get(`${txUrl}?${txParams.toString()}`)
-            ];
+            ]);
 
-            const [statsData, trendData, utilData, txData] = await Promise.all(promises);
+            // Safely extract results with type validation
+            if (results[0].status === 'fulfilled' && Array.isArray(results[0].value)) {
+                setStats(results[0].value);
+            } else {
+                setStats([]);
+            }
 
-            setStats(statsData);
-            setTrend(trendData);
-            if (Array.isArray(utilData)) setUtilizationTrend(utilData);
-            if (Array.isArray(txData)) {
-                setTransactions(txData);
+            if (results[1].status === 'fulfilled' && Array.isArray(results[1].value)) {
+                setTrend(results[1].value);
+            } else {
+                setTrend([]);
+            }
+
+            if (results[2].status === 'fulfilled' && Array.isArray(results[2].value)) {
+                setUtilizationTrend(results[2].value);
+            } else {
+                setUtilizationTrend([]);
+            }
+
+            if (results[3].status === 'fulfilled' && Array.isArray(results[3].value)) {
+                setTransactions(results[3].value);
+            } else {
+                setTransactions([]);
             }
         } catch (e) {
             console.error('Failed to load data', e);
+            // Reset to safe empty state to prevent any rendering crash
+            setStats([]);
+            setTrend([]);
+            setUtilizationTrend([]);
+            setTransactions([]);
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -225,8 +250,8 @@ export default function TransactionsScreen() {
                 </View>
             </ThemedView>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, marginBottom: 10 }}>
-                <ThemedText type="subtitle">{trendMode === 'spending' ? 'Spending Trend' : 'Utilization Trend'}</ThemedText>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                <ThemedText type="subtitle" style={{ flexShrink: 1 }}>{trendMode === 'spending' ? 'Spending Trend' : 'Utilization Trend'}</ThemedText>
                 <View style={{ flexDirection: 'row', backgroundColor: '#333', borderRadius: 8, padding: 2 }}>
                     <TouchableOpacity
                         onPress={() => setTrendMode('spending')}
@@ -291,14 +316,14 @@ export default function TransactionsScreen() {
         <View style={[styles.transactionItem, { borderBottomColor: borderColor }]}>
             <View style={styles.leftContent}>
                 <MerchantLogo name={item.description} />
-                <View style={styles.textContent}>
-                    <ThemedText type="defaultSemiBold">{item.description}</ThemedText>
+                <View style={[styles.textContent, { flex: 1 }]}>
+                    <ThemedText type="defaultSemiBold" numberOfLines={1} ellipsizeMode="tail">{item.description}</ThemedText>
                     <ThemedText style={styles.date}>{new Date(item.created_at).toLocaleDateString()}</ThemedText>
                 </View>
             </View>
             <ThemedText
                 type="defaultSemiBold"
-                style={{ color: item.type === 'payment' ? successColor : textColor }}
+                style={{ color: item.type === 'payment' ? successColor : textColor, flexShrink: 0, marginLeft: 8 }}
             >
                 {item.type === 'payment' ? '+' : '-'}${parseFloat(item.amount).toFixed(2)}
             </ThemedText>
@@ -348,8 +373,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     scrollContent: {
-        paddingHorizontal: 20,
+        paddingHorizontal: isTablet ? 40 : 20,
         paddingBottom: 20,
+        maxWidth: isTablet ? 700 : undefined,
+        alignSelf: isTablet ? 'center' as const : undefined,
+        width: '100%',
     },
     statsContainer: {
         marginBottom: 10,
@@ -464,9 +492,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
+        flex: 1,
     },
     textContent: {
         gap: 2,
+        flex: 1,
     },
     date: {
         fontSize: 12,

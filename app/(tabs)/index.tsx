@@ -13,7 +13,10 @@ import * as Notifications from 'expo-notifications';
 import { useFocusEffect, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+const { width: screenWidth } = Dimensions.get('window');
+const isTablet = screenWidth >= 768;
 
 interface Card {
   id: number;
@@ -273,8 +276,11 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   content: {
-    paddingHorizontal: 20,
+    paddingHorizontal: isTablet ? 40 : 20,
     paddingBottom: 40,
+    maxWidth: isTablet ? 700 : undefined,
+    alignSelf: isTablet ? 'center' as const : undefined,
+    width: '100%',
   },
   balanceCard: {
     padding: 24,

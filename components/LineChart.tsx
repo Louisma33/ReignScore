@@ -40,7 +40,7 @@ const getBezierPath = (points: { x: number; y: number }[]) => {
 export function LineChart({
     data,
     height = 200,
-    width = Dimensions.get('window').width - 40,
+    width = Math.min(Dimensions.get('window').width - 40, 660),
     color = '#FFD700',
     strokeWidth = 3,
     valueFormatter = (v) => `${v}`,
