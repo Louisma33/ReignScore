@@ -1,10 +1,20 @@
 import OpenAI from 'openai';
 import { query } from '../db';
 
-// Initialize OpenAI client (works with both OpenAI and Anthropic-compatible endpoints)
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || 'mock-key',
-});
+// Initialize AI client - supports both OpenAI and Anthropic (via OpenAI-compatible endpoint)
+const hasOpenAIKey = process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'mock-key';
+const hasAnthropicKey = process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== '';
+
+const openai = new OpenAI(
+    hasOpenAIKey
+        ? { apiKey: process.env.OPENAI_API_KEY }
+        : hasAnthropicKey
+            ? { apiKey: process.env.ANTHROPIC_API_KEY, baseURL: 'https://api.anthropic.com/v1/' }
+            : { apiKey: 'mock-key' }
+);
+
+// Default model based on which key is available
+const DEFAULT_MODEL = hasOpenAIKey ? 'gpt-4-turbo-preview' : hasAnthropicKey ? 'claude-sonnet-4-20250514' : '';
 
 // Rate limit: 20 messages per day for free tier
 const DAILY_MESSAGE_LIMIT_FREE = 20;
@@ -197,7 +207,7 @@ Key Guidelines:
 
             const completion = await openai.chat.completions.create({
                 messages,
-                model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
+                model: DEFAULT_MODEL || process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
                 max_tokens: 500,
                 temperature: 0.7,
             });
